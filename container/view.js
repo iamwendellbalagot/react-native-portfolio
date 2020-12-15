@@ -4,39 +4,36 @@ import { styles } from './styles';
 
 const view = () => {
     const [input, setInput] = useState('');
-
-    const data = [
-        {key: 'Devin'},
-        {key: 'Dan'},
-        {key: 'Dominic'},
-        {key: 'Jackson'},
-        {key: 'James'},
-        {key: 'Joel'},
-        {key: 'John'},
-        {key: 'Jillian'},
-        {key: 'Jimmy'},
-        {key: 'Julie'},
-    ]
+    const [names, setNames] = useState(['Study Computers']);
+    
 
     const buttonClicked = () => {
-        console.log(input);
+        setNames([...names, input]);
         setInput('');
     };
     return (
         <View style={styles.view}>
             <Text>
-                Welcome to React Native APP
+                Todo List APP
             </Text>
-            <TextInput 
-                placeholder='Your text here...'
-                value={input}
-                onChangeText={e => setInput(e)}
-            />
-            <Button onPress={buttonClicked} >Click</Button>
-            {data.map(item => (
-                <Text key={item.key} >
-                    {item.key}
-                </Text>
+            <View style={styles.form}>
+                <TextInput 
+                    placeholder='Your text here...'
+                    value={input}
+                    onChangeText={e => setInput(e)}
+                    style={styles.input}
+                />
+                <Button 
+                    onPress={buttonClicked} 
+                    title='Add'
+                    accessibilityLabel="Learn more about this purple button"    
+                />
+            </View>
+            
+            {names.map(name => (
+                <Text 
+                    style={styles.list}
+                    key={name} >{name}</Text>
             ))}
         </View>
     )
