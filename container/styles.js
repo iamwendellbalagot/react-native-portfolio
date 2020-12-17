@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
         backgroundColor: 'steelblue',
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100%',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -14,18 +14,17 @@ export const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     input: {
-        padding: '5px',
+        padding: 5,
         backgroundColor: '#ccc',
         color: 'black',
-        border: '1px solid black',
-        margin: '5px'
+        margin: 5
     },
     list: {
-        padding: '10px',
+        padding: 10,
         backgroundColor: '#ccc',
         width: '80%',
-        borderRadius: '10px',
+        borderRadius: 10,
         textAlign: 'center',
-        marginTop: '10px'
+        marginTop: 10
     }
 })

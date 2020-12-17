@@ -2,10 +2,11 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import Home from './container/view';
+import Navigation from './container/Navigation/Navigation';
 
 const FlatListBasics = () => {
   return (
-    <Home />
+    <Navigation />
   );
 }
 
