@@ -17,6 +17,7 @@ export const styles  = StyleSheet.create({
     form: {
         height: 150,
         width: '80%',
+        marginBottom: 50
     },
     form__input: {
         borderColor: 'black',
@@ -24,7 +25,23 @@ export const styles  = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5
     },
+    form__input__err: {
+        borderColor: 'salmon',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 5
+    },
+    form__input_reg: {
+        borderColor: 'black',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        marginBottom: 5
+    },
     form__button: {
         paddingTop: 10
+    },
+    home: {
+        width: '80%'
     }
 })
