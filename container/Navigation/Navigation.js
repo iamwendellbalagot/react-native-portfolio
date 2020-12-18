@@ -40,19 +40,21 @@ const Navigation = () => {
     return (
         <View style={styles.view} >
             <NavigationContainer>
-                <Stack.Navigator>
+                <Stack.Navigator screenOptions={{
+                    headerStyle: {
+                        backgroundColor: 'steelblue'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        color: "#fff"            
+                    }
+                }}>
                     <Stack.Screen 
                         name='Home'
                         component={Home}
                         options={{
                             title: 'Home',
-                            headerStyle: {
-                                backgroundColor: 'steelblue'
-                            },
-                            headerTintColor: '#fff',
-                            headerTitleStyle: {
-                                color: "#fff"            
-                            }
+                            
                         }}
                     />
                     <Stack.Screen 
