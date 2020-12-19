@@ -53,5 +53,21 @@ export const styles = StyleSheet.create({
         borderWidth: 2,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    button__label: {
+        fontSize: 18,
+        fontWeight: '400'
+    },
+    laps: {
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderTopColor: '#151515',
+        borderWidth: 2,
+        paddingVertical: 10
+    },
+    laps__text: {
+        color: 'white'
     }
 });

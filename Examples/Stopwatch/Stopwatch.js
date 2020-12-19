@@ -53,12 +53,25 @@ const Button = ({type}) => {
             break;
     }
     return(
-        <View 
+        <TouchableOpacity
+        activeOpacity={0.7} 
         style={[styles.button__container, 
         {backgroundColor: btnStyles.bg}]}>
             <View style={styles.button__ring}>
-                <Text style={{color: btnStyles.cl}} >{type}</Text>
+                <Text style={[styles.button__label,{color: btnStyles.cl}]} >{type}</Text>
             </View>
+        </TouchableOpacity>
+    );
+};
+
+const Laps = ({interval, index}) => {
+    const timeRef = moment.duration(interval);
+    const formatTime = (n) => n<10 ? '0'+n : n; 
+    return (
+        <View style={styles.laps}>
+            <Text style={styles.laps__text}>{`Lap ${index}`}</Text>
+            <Text style={styles.laps__text}>
+            {`${formatTime(timeRef.minutes())}:${formatTime(timeRef.seconds())}:${formatTime(Math.floor(timeRef.minutes()))}`}</Text>
         </View>
     );
 };
@@ -71,9 +84,14 @@ const App = () => {
             <Timer time={time} />
             <TimeToBeat laps = {laps}/>
             <ControlsContainer>
-                <Button type='Laps' />
+                <Button type='Lap' />
                 <Button type='Start' />
             </ControlsContainer>
+            <ScrollView style={{paddingHorizontal: 20,marginTop:20, width: '100%'}}>
+                {laps.map((int, index) => (
+                    <Laps interval={int} index={index} key={index}/>
+                ))}
+            </ScrollView>
         </View>
     )
 }
