@@ -21,14 +21,15 @@ const Timer =({time}) => {
 };
 
 const TimeToBeat = ({laps}) => {
-    const minRef = moment.duration(Math.min.apply(Math, laps))
-    const maxRef = moment.duration(Math.max.apply(Math, laps))
+    const formatTime =(n) => n < 10 ? '0'+n : n;
+    const minRef = moment.duration(laps.length === 0? 0 : Math.min.apply(Math, laps))
+    const maxRef = moment.duration(laps.length === 0? 0 : Math.max.apply(Math, laps))
     return (
         <View style={styles.metrics__container}>
             <Text style={styles.metrics__time}>
-                {`Minimum:  ${minRef.minutes()}:${minRef.seconds()}:${Math.floor(minRef.minutes())}`}</Text>
+                {`Minimum:  ${formatTime(minRef.minutes())}:${formatTime(minRef.seconds())}:${formatTime(Math.floor(minRef.minutes()))}`}</Text>
             <Text style={styles.metrics__time}>
-                {`Maximum:  ${maxRef.minutes()}:${maxRef.seconds()}:${Math.floor(maxRef.minutes())}`}</Text>
+                {`Maximum:  ${formatTime(maxRef.minutes())}:${formatTime(maxRef.seconds())}:${formatTime(Math.floor(maxRef.minutes()))}`}</Text>
         </View>
     );
 };
@@ -39,7 +40,7 @@ const ControlsContainer = ({children}) => {
     );
 };
 
-const Button = ({type}) => {
+const Button = ({type, method}) => {
     let btnStyles = {};
     switch(type){
         case 'Start':
@@ -54,9 +55,10 @@ const Button = ({type}) => {
     }
     return(
         <TouchableOpacity
-        activeOpacity={0.7} 
-        style={[styles.button__container, 
-        {backgroundColor: btnStyles.bg}]}>
+            activeOpacity={0.7}
+            onPress={() => method()}
+            style={[styles.button__container, 
+            {backgroundColor: btnStyles.bg}]}>
             <View style={styles.button__ring}>
                 <Text style={[styles.button__label,{color: btnStyles.cl}]} >{type}</Text>
             </View>
@@ -77,19 +79,40 @@ const Laps = ({interval, index}) => {
 };
 
 const App = () => {
-    const [time, setTime] = useState(12321);
-    const [laps, setLaps] = useState([123123,32233,223234])
+    const [time, setTime] = useState(0);
+    const [timerStatus,setTimerStatus] = useState(false);
+    const [appInterval, setAppInterval] = useState(0);
+    const [start, setStart] = useState(0);
+    const [laps, setLaps] = useState([3423, 234532]);
+
+    const startTimer = () => {
+        setTimerStatus(true);
+        const timeNow = new Date().getTime();
+        setStart(timeNow);
+        setAppInterval(setInterval(() => {
+            setTime(new Date().getTime() - timeNow);
+        }, 100));
+    }
+
+    const stopTimer = () => {
+        clearInterval(appInterval);
+        setTimerStatus(false);
+    };
     return (
         <View style={styles.app}>
             <Timer time={time} />
             <TimeToBeat laps = {laps}/>
-            <ControlsContainer>
+            {!timerStatus?<ControlsContainer>
                 <Button type='Lap' />
-                <Button type='Start' />
+                <Button type='Start' method={startTimer}/>
             </ControlsContainer>
+            :<ControlsContainer>
+                <Button type='Reset' />
+                <Button type='Stop' method={stopTimer}/>
+            </ControlsContainer>}
             <ScrollView style={{paddingHorizontal: 20,marginTop:20, width: '100%'}}>
                 {laps.map((int, index) => (
-                    <Laps interval={int} index={index} key={index}/>
+                    <Laps interval={int} index={laps.length - index} key={index}/>
                 ))}
             </ScrollView>
         </View>
