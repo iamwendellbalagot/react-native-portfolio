@@ -3,10 +3,11 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import Navigation from './container/Navigation/Navigation';
 import Login from './Examples/Login/Login';
-const FlatListBasics = () => {
+import Stopwatch from './Examples/Stopwatch/Stopwatch';
+const Main = () => {
   return (
-    <Login />
+    <Stopwatch />
   );
 }
 
-export default FlatListBasics;
+export default Main;
