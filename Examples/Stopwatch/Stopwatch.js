@@ -27,9 +27,9 @@ const TimeToBeat = ({laps}) => {
     return (
         <View style={styles.metrics__container}>
             <Text style={styles.metrics__time}>
-                {`Minimum:  ${formatTime(minRef.minutes())}:${formatTime(minRef.seconds())}:${formatTime(Math.floor(minRef.minutes()))}`}</Text>
+                {`Minimum:  ${formatTime(minRef.minutes())}:${formatTime(minRef.seconds())}:${formatTime(Math.floor(minRef.milliseconds()/10))}`}</Text>
             <Text style={styles.metrics__time}>
-                {`Maximum:  ${formatTime(maxRef.minutes())}:${formatTime(maxRef.seconds())}:${formatTime(Math.floor(maxRef.minutes()))}`}</Text>
+                {`Maximum:  ${formatTime(maxRef.minutes())}:${formatTime(maxRef.seconds())}:${formatTime(Math.floor(maxRef.milliseconds()/10))}`}</Text>
         </View>
     );
 };
@@ -73,7 +73,7 @@ const Laps = ({interval, index}) => {
         <View style={styles.laps}>
             <Text style={styles.laps__text}>{`Lap ${index}`}</Text>
             <Text style={styles.laps__text}>
-            {`${formatTime(timeRef.minutes())}:${formatTime(timeRef.seconds())}:${formatTime(Math.floor(timeRef.minutes()))}`}</Text>
+            {`${formatTime(timeRef.minutes())}:${formatTime(timeRef.seconds())}:${formatTime(Math.floor(timeRef.milliseconds() / 10))}`}</Text>
         </View>
     );
 };
@@ -83,31 +83,54 @@ const App = () => {
     const [timerStatus,setTimerStatus] = useState(false);
     const [appInterval, setAppInterval] = useState(0);
     const [start, setStart] = useState(0);
-    const [laps, setLaps] = useState([3423, 234532]);
+    //const [timeElapsed, setTimeElapsed] = useState(0);
+    const [laps, setLaps] = useState([]);
 
     const startTimer = () => {
         setTimerStatus(true);
         const timeNow = new Date().getTime();
         setStart(timeNow);
         setAppInterval(setInterval(() => {
-            setTime(new Date().getTime() - timeNow);
+            let timeElapsed = new Date().getTime() - timeNow;
+            //setTimeElapsed(timeElapsed);
+            setTime(timeElapsed);
         }, 100));
     }
 
     const stopTimer = () => {
         clearInterval(appInterval);
+        let newLaps = [time, ...laps];
+        const formatLap = (total, num) => {
+            return total - num
+        }
+        setLaps([newLaps.reduce(formatLap), ...laps])
         setTimerStatus(false);
     };
+
+    const addLap = () => {
+        let newLaps = [time, ...laps];
+        const formatLap = (total, num) => {
+            return total - num
+        }
+        setLaps([newLaps.reduce(formatLap), ...laps])
+    }
+
+    const resetTimer = () => {
+        setTime(0);
+        setLaps([]);
+        setStart(0);
+    };
+
     return (
         <View style={styles.app}>
             <Timer time={time} />
             <TimeToBeat laps = {laps}/>
             {!timerStatus?<ControlsContainer>
-                <Button type='Lap' />
+                <Button type='Reset' method={resetTimer} />
                 <Button type='Start' method={startTimer}/>
             </ControlsContainer>
             :<ControlsContainer>
-                <Button type='Reset' />
+                <Button type='Lap' method={addLap}/>
                 <Button type='Stop' method={stopTimer}/>
             </ControlsContainer>}
             <ScrollView style={{paddingHorizontal: 20,marginTop:20, width: '100%'}}>
