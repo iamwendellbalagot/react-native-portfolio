@@ -8,7 +8,13 @@ import { auth } from './firebase';
 import {styles} from './styles';
 
 
-const Home =  ({username}) => {
+const Home =  () => {
+
+    const user = auth.currentUser;
+    const [username, setUsername] = useState(user.displayName? user.displayName : '');
+    user.reload()
+    .then(res => {setUsername(user.displayName)})
+    
     const handleLogout = () =>{
         auth.signOut();
         console.log('Signed OUT');
@@ -29,7 +35,7 @@ const Home =  ({username}) => {
     );
 }
 
-const Login = () => {
+const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [error, setError] = useState(null);
@@ -72,6 +78,7 @@ const Login = () => {
                     <Button
                         title='Sign Up'
                         color='steelblue'
+                        onPress={() => navigation.navigate('Signup')}
                     />
                 </View>
             </View>
@@ -80,6 +87,24 @@ const Login = () => {
 }
 
 const SignUp = () => {
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('')
+    const [pass, setPass] = useState('');
+    const [btnSt, setBtnSt] = useState(true);
+    useEffect(() => {
+        return (email && pass && username ? setBtnSt(false): setBtnSt(true))
+    }, [email, pass, username])
+
+    const handleRegister = () => {
+        console.log(email, username, pass);
+        auth.createUserWithEmailAndPassword(email, pass)
+        .then(res => {
+            res.user.updateProfile({
+                displayName: username
+            }).then(_res => console.log('Display Name ADDED'))
+        })
+        .catch(err => console.log(err))
+    };
     return(
         <View style={styles.login}>
             <Text style={styles.login__header}>Sign Up</Text>
@@ -87,20 +112,28 @@ const SignUp = () => {
                 <TextInput
                     placeholder='Username'
                     style={styles.form__input_reg}
+                    onChangeText={e => setUsername(e)}
+                    value={username}
                 />
                 <TextInput
                     placeholder='Email'
                     style={styles.form__input_reg}
+                    onChangeText={e => setEmail(e)}
+                    value={email}
                 />
                 <TextInput
                     placeholder='Password'
                     style={styles.form__input_reg}
                     secureTextEntry={true}
+                    onChangeText={e => setPass(e)}
+                    value={pass}
                 />
                 <View style={styles.form__button}>
                     <Button
                         title='Register'
                         color='steelblue'
+                        onPress={handleRegister}
+                        disabled={btnSt}
                     />
                 </View>
             </View>
@@ -108,6 +141,8 @@ const SignUp = () => {
         </View>
     );
 }
+
+const Stack = createStackNavigator();
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -126,9 +161,22 @@ const App = () => {
     }, []);
 
     return(
-        <View>
-            {user? <Home username = {user.email}/> : <SignUp />}
-        </View>
+        <NavigationContainer>
+        {user? <Home username = {user? user.displayName: ''}/> : 
+
+            <Stack.Navigator >
+                <Stack.Screen 
+                    name='Login'
+                    component={Login}
+                    options={{title: ''}}
+                />
+                <Stack.Screen 
+                    name='Signup'
+                    component={SignUp}
+                    options={{title: ''}}
+                />
+            </Stack.Navigator>}
+        </NavigationContainer>
     );
 }
 
