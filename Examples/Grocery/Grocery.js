@@ -24,35 +24,47 @@ const Log = ({item, selection}) => {
     );
 };
 
-const ModalButton = ({name, method}) => {
+const ModalButton = ({name, method, input}) => {
     return (
         <TouchableOpacity 
             style={styles.modalButtons}
             activeOpacity={0.7}
-            onPress={() => method()}
+            onPress={() => method(name==='Ok'? input: null)}
             >
             <Text style={{color: '#fcf8ec'}}>{name}</Text>
         </TouchableOpacity>
     );
 };
 
-const ModalCreate = ({visible, method}) => {
+const ModalCreate = ({visible, method, createLog}) => {
+    const [input, setInput] = useState('');
+
+    useEffect(() => {
+        return () => setInput('');
+    },[visible])
+    
     return (
         <Modal
-            animationType='slide'
+            animationType='fade'
             transparent={true}
             visible={visible}
         >
-            <View style={styles.modal__bd} >
+            <View style={styles.modal__bd}>
                 <View style={styles.modal__container}>
                     <Text style={styles.modal__title}>Create Log</Text>
                     <TextInput 
                         placeholder='Name'
+                        value={input}
+                        onChangeText={e =>setInput(e)}
                         style={styles.modal__input}
                     />
                     <View style={styles.modalButtons__container}>
                         <ModalButton name='Cancel' method={method}/>
-                        <ModalButton name='Ok'/>
+                        <ModalButton 
+                            name='Ok'
+                            method={createLog}
+                            input={input}
+                        />
                     </View>
                 </View>
             </View>
@@ -60,11 +72,11 @@ const ModalCreate = ({visible, method}) => {
     );
 };
 
-const CreateIcon = ({create}) => {
+const CreateIcon = ({enableModal}) => {
     return (
         <TouchableOpacity 
             style={styles.createIcon__container}
-            onPress={create} >
+            onPress={enableModal} >
             <MaterialIcons name="create" size={50} color="#fcf8ec" />
         </TouchableOpacity>
     );
@@ -102,8 +114,23 @@ const Home = ({navigation}) => {
         navigation.navigate('LogPage', {item: logItem})
     };
 
-    const handleCreate = () => {
+    const handleTriggerModal = () => {
         setModalSt(!modalSt);
+    };
+
+    const handleCreate = (logName) => {
+        if(!logName) return;
+        console.log(logName);
+        setModalSt(!modalSt)
+        let newData = {
+            id: moment().format(),
+            dateCreated: moment().format('LL'),
+            name: logName,
+            items: [],
+            total: 0.0
+        }
+
+        setlogs([newData, ...logs]);
     };
 
     return (
@@ -115,8 +142,12 @@ const Home = ({navigation}) => {
                     selection= {handleSelection} 
                     />
             ))}
-            <CreateIcon create={handleCreate}/>
-            <ModalCreate visible={modalSt} method={handleCreate} />
+            <CreateIcon enableModal={handleTriggerModal}/>
+            <ModalCreate 
+                visible={modalSt} 
+                method={handleTriggerModal}
+                createLog={handleCreate}
+            />
         </View>
     );
 };
