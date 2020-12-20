@@ -1,12 +1,12 @@
 import React from 'react';
-import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {View, Text, ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {styles} from './styles';
 
 const Home = () => {
     return (
-        <View>
+        <View style={styles.home}>
             <Text>Home</Text>
         </View>
     );
@@ -27,7 +27,9 @@ const App = () => {
                 <Stack.Screen 
                     name='Home'
                     component={Home}
-                    options={{title:'Home'}}
+                    options={{
+                        title:'Home'
+                    }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
