@@ -5,7 +5,7 @@ import {styles} from './styles';
 
 
 const Timer =({time}) => {
-    const timeDuration = moment.duration(time)
+    const timeDuration = moment.duration(time);
     const formatTime =(n) => n < 10 ? '0'+n : n;
     const minutes = formatTime(timeDuration.minutes());
     const seconds = formatTime(timeDuration.seconds());
@@ -87,6 +87,7 @@ const Laps = ({interval, index}) => {
     );
 };
 
+//[Main Container]
 const App = () => {
     const [time, setTime] = useState(0);
     const [resumeRef, setResumeRef] = useState(0);
@@ -97,6 +98,7 @@ const App = () => {
     const [laps, setLaps] = useState([]);
 
     useEffect(() => {
+        //[Cleanup Timer when unmounting]
         return () => clearInterval(appInterval);
     },[]);
 
