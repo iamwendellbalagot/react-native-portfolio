@@ -40,14 +40,22 @@ const ControlsContainer = ({children}) => {
     );
 };
 
-const Button = ({type, method}) => {
+const Button = ({type, method, time}) => {
     let btnStyles = {};
+    let disabled = time === 0 ? true : false;
+
     switch(type){
         case 'Start':
             btnStyles = {cl: '#50D167', bg:'#1B361F'}
             break;
+        case 'Resume':
+            btnStyles = {cl: '#50D167', bg:'#1B361F'}
+            break;
         case 'Stop':
             btnStyles = {cl: '#E33935', bg:'#3C1715'}
+            break;
+        case 'Reset':
+            btnStyles = {cl: '#FFFFFF', bg:'#3D3D3D', disabled: time === 0 ? true : false}
             break;
         default:
             btnStyles = {cl: '#FFFFFF', bg:'#3D3D3D'}
@@ -57,8 +65,9 @@ const Button = ({type, method}) => {
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => method()}
+            disabled={btnStyles.disabled}
             style={[styles.button__container, 
-            {backgroundColor: btnStyles.bg}]}>
+            {backgroundColor: btnStyles.bg, opacity: btnStyles.disabled? 0.5 : 1}]}>
             <View style={styles.button__ring}>
                 <Text style={[styles.button__label,{color: btnStyles.cl}]} >{type}</Text>
             </View>
@@ -80,11 +89,16 @@ const Laps = ({interval, index}) => {
 
 const App = () => {
     const [time, setTime] = useState(0);
+    const [resumeRef, setResumeRef] = useState(0);
     const [timerStatus,setTimerStatus] = useState(false);
     const [appInterval, setAppInterval] = useState(0);
     const [start, setStart] = useState(0);
     //const [timeElapsed, setTimeElapsed] = useState(0);
     const [laps, setLaps] = useState([]);
+
+    useEffect(() => {
+        return () => clearInterval(appInterval);
+    },[]);
 
     const startTimer = () => {
         setTimerStatus(true);
@@ -93,7 +107,7 @@ const App = () => {
         setAppInterval(setInterval(() => {
             let timeElapsed = new Date().getTime() - timeNow;
             //setTimeElapsed(timeElapsed);
-            setTime(timeElapsed);
+            setTime(timeElapsed + resumeRef);
         }, 100));
     }
 
@@ -105,6 +119,7 @@ const App = () => {
         }
         setLaps([newLaps.reduce(formatLap), ...laps])
         setTimerStatus(false);
+        setResumeRef(time);
     };
 
     const addLap = () => {
@@ -119,6 +134,7 @@ const App = () => {
         setTime(0);
         setLaps([]);
         setStart(0);
+        setResumeRef(0);
     };
 
     return (
@@ -126,8 +142,9 @@ const App = () => {
             <Timer time={time} />
             <TimeToBeat laps = {laps}/>
             {!timerStatus?<ControlsContainer>
-                <Button type='Reset' method={resetTimer} />
-                <Button type='Start' method={startTimer}/>
+                <Button type='Reset' method={resetTimer} time={time} />
+                {start===0?<Button type='Start' method={startTimer}/>
+                :<Button type='Resume' method={startTimer} />}
             </ControlsContainer>
             :<ControlsContainer>
                 <Button type='Lap' method={addLap}/>

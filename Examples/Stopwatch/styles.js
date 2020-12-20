@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button__label: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: '400'
     },
     laps: {
