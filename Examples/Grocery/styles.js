@@ -86,5 +86,37 @@ export const styles = StyleSheet.create({
         paddingVertical: 5,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    logPage: {
+        height: '100%',
+        backgroundColor: '#fcf8ec'
+    },
+    total__container: {
+        height: 100,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: '#456268',
+        borderBottomWidth: 1
+    },
+    total__price: {
+        fontSize: 35,
+        fontWeight: 'bold'
+    },
+    items: {
+        height: 35,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        borderColor: '#456268',
+        borderBottomWidth: 1
+    },
+    item__name: {
+        color: '#456268',
+        fontSize: 18,
+        
     }
 });
