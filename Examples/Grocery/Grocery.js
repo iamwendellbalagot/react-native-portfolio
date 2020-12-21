@@ -169,8 +169,25 @@ const Home = ({navigation}) => {
     const [modalSt, setModalSt] = useState(false);
     const [logs, setlogs] = useState([]);
 
+    const updateLogs = () => {
+        AsyncStorage.getAllKeys()
+            .then(keys => {
+                console.log(keys);
+                let logsAccu = []
+                keys.forEach(key => {
+                    AsyncStorage.getItem(key)
+                        .then(item => {
+                            logsAccu = [JSON.parse(item), ...logsAccu]
+                            setlogs(logsAccu);
+                        })
+                });
+                console.log('Logs ACCU: ',logsAccu);
+            })
+    }
+
     const handleSelection = (logItem) => {
-        navigation.navigate('LogPage', {item: logItem});
+        
+        navigation.navigate('LogPage', {item: logItem, updateLogs: updateLogs});
     };
 
     const handleTriggerModal = () => {
@@ -178,19 +195,8 @@ const Home = ({navigation}) => {
     };
 
     useEffect(() => {
-        AsyncStorage.getAllKeys()
-         .then(keys => {
-             console.log(keys);
-             let logsAccu = []
-             keys.forEach(key => {
-                 AsyncStorage.getItem(key)
-                    .then(item => {
-                        logsAccu = [JSON.parse(item), ...logsAccu]
-                        setlogs(logsAccu);
-                    })
-             });
-             console.log('Logs ACCU: ',logsAccu);
-         })
+        updateLogs();
+        // navigation.setParams({updateLogs: (() => updateLogs())})
     },[]);
 
     // useEffect(() => {
@@ -255,12 +261,20 @@ const LogPage = ({navigation, route}) => {
         console.log(new Date().getTime())
     },[]);
 
+    const counter = (arrayItems) => {
+        let priceAccu = 0;
+        arrayItems && arrayItems.forEach(item => {
+            priceAccu = priceAccu + (Number(item.price) * Number(item.qt));
+        });
+        return priceAccu.toFixed(2);
+    };
+
     useEffect(() => {
         let priceAccu = 0;
         items && items.forEach(item => {
             priceAccu = priceAccu + (Number(item.price) * Number(item.qt));
         });
-        setTotalPrice(priceAccu.toFixed(2));
+        setTotalPrice(counter(items));
     },[items])
 
     useEffect(() => {
@@ -281,8 +295,15 @@ const LogPage = ({navigation, route}) => {
         //     total: 0.0
         // }
         setItems([item, ...items])
-        let newData = Object.assign(route.params.item)
+        let newData = Object.assign(route.params.item);
         newData.items = [item, ...items];
+        newData.total = counter(newData.items)
+        // console.log(newData);
+        AsyncStorage.setItem(
+            route.params.item.id,
+            JSON.stringify(newData)
+        ).then(res => route.params.updateLogs());
+        
     };
 
     return(
