@@ -308,10 +308,10 @@ const Home = ({navigation}) => {
 
 const Items =({item}) => {
     return (
-        <View style={styles.items}>
+        <TouchableOpacity style={styles.items} activeOpacity={0.7}>
             <Text style={styles.item__name}>{`${item.name} x${item.qt}`}</Text>
             <Text>{item.price}</Text>
-        </View>
+        </TouchableOpacity>
     );
 };
 
@@ -369,9 +369,36 @@ const LogPage = ({navigation, route}) => {
                 <Text style={styles.total__price}>{totalPrice}</Text>
                 <Text>Total Price</Text>
             </View>
-            {items?.map(item => (
+            <SwipeListView 
+                data={items}
+                renderItem={data => (
+                    <View style={[styles.rowFront, {borderBottomWidth: 0, height: 50, backgroundColor: '#ccc'}]}>
+                        <Items 
+                            item={data.item} />
+                    </View>
+                )}
+                keyExtractor = {(data) => data.name + data.price}
+                renderHiddenItem={data => (
+                    <TouchableOpacity
+                        style={styles.rowBack} >
+                        <MaterialIcons name="delete" size={24} color="black" />
+                        <MaterialIcons name="delete" size={24} color="black" />
+                    </TouchableOpacity>
+                )}
+                useFlatList
+                closeOnRowPress
+                closeOnScroll
+                closeOnRowBeginSwipe
+                disableRightSwipe
+                previewOpenDelay={3000}
+                friction={1000}
+                tension={40}
+                leftOpenValue={55}
+                rightOpenValue={-55}
+            />
+            {/* {items?.map(item => (
                 <Items item={item} key={item.name + item.price} />
-            ))}
+            ))} */}
             <CreateIcon enableModal={handleTriggerModal}/>
             <ModalCreate visible={modalSt}>
                 <ItemAdd 

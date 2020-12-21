@@ -97,14 +97,14 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderColor: '#456268',
-        borderBottomWidth: 1
+        borderBottomWidth: 2
     },
     total__price: {
         fontSize: 35,
         fontWeight: 'bold'
     },
     items: {
-        height: 35,
+        height: 50,
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
@@ -112,7 +112,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 15,
         borderColor: '#456268',
-        borderBottomWidth: 1
+        borderBottomWidth: 2
     },
     item__name: {
         color: '#456268',
