@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
         borderColor: '#79a3b1',
         borderBottomWidth: 1,
         paddingVertical:5,
-        paddingHorizontal: 10
+        paddingHorizontal: 15
     },
     log__top: {
         flexDirection: 'row',
