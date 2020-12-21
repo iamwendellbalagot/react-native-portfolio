@@ -118,5 +118,21 @@ export const styles = StyleSheet.create({
         color: '#456268',
         fontSize: 18,
         
-    }
+    },
+    rowBack: {
+        alignItems: 'center',
+        flex: 1,
+        backgroundColor: 'salmon',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 15,
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: '#fcf8ec',
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 50,
+    },
 });

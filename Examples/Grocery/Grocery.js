@@ -1,11 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {View, Modal,Text, AsyncStorage,ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
+import {View, Modal,Text, LogBox,Alert, AsyncStorage,ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons'; 
+import {SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
 import moment from 'moment';
 
 import {styles} from './styles';
+
+// LogBox.ignoreWarnings();
+
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 
 //[COMPONENTS]
 const Log = ({item, selection}) => {
@@ -186,7 +193,6 @@ const Home = ({navigation}) => {
     }
 
     const handleSelection = (logItem) => {
-        
         navigation.navigate('LogPage', {item: logItem, updateLogs: updateLogs});
     };
 
@@ -196,7 +202,7 @@ const Home = ({navigation}) => {
 
     useEffect(() => {
         updateLogs();
-        // navigation.setParams({updateLogs: (() => updateLogs())})
+        //navigation.setParams({updateLogs: (() => updateLogs())})
     },[]);
 
     // useEffect(() => {
@@ -222,15 +228,73 @@ const Home = ({navigation}) => {
         setlogs([newData, ...logs]);
     };
 
+    
+
+    const handleAlert = (logItem) => {
+        const deleteLog = () => {
+            AsyncStorage.removeItem(logItem.id)
+            .then(res => {
+                console.log('Deleted an item ', logItem.name);
+                updateLogs();
+            })
+        };
+
+        Alert.alert(
+            'Delete',
+            'Are you sure you want to delete this item?',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('Cancelled'),
+                    style: 'cancel'
+                },
+                {
+                    text: 'Ok',
+                    onPress: () => deleteLog()
+                }
+            ]
+        )
+    }
+
     return (
         <View style={styles.home}>
-            {logs.map(log => (
+            <SwipeListView 
+                data={logs}
+                renderItem={data => (
+                    <View style={styles.rowFront}>
+                        <Log 
+                            item={data.item} 
+                            key={data.item.id}
+                            selection= {handleSelection} 
+                        />
+                    </View>
+                )}
+                renderHiddenItem={data => (
+                    <TouchableOpacity 
+                        onPress={() => handleAlert(data.item)} 
+                        style={styles.rowBack} >
+                        <MaterialIcons name="delete" size={24} color="black" />
+                        <MaterialIcons name="delete" size={24} color="black" />
+                    </TouchableOpacity>
+                )}
+                useFlatList
+                closeOnRowPress
+                closeOnScroll
+                closeOnRowBeginSwipe
+                disableRightSwipe
+                previewOpenDelay={3000}
+                friction={1000}
+                tension={40}
+                leftOpenValue={55}
+                rightOpenValue={-55}
+            />
+            {/* {logs.map(log => (
                 <Log 
                     item={log} 
                     key={log.id}
                     selection= {handleSelection} 
                     />
-            ))}
+            ))} */}
             <CreateIcon enableModal={handleTriggerModal}/>
             <ModalCreate visible={modalSt}>
                 <LogCreate 
@@ -287,13 +351,6 @@ const LogPage = ({navigation, route}) => {
 
     const handleItemAdd = (item) => {
         console.log('Adding...', item)
-        // let newData = {
-        //     id: moment().format(),
-        //     dateCreated: moment().format('LL'),
-        //     name: logName,
-        //     items: [],
-        //     total: 0.0
-        // }
         setItems([item, ...items])
         let newData = Object.assign(route.params.item);
         newData.items = [item, ...items];
