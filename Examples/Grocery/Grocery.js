@@ -41,7 +41,7 @@ const ModalButton = ({name, method, input, status}) => {
 const ModalCreate = ({visible, children}) => {
     return (
         <Modal
-            animationType='fade'
+            animationType='none'
             transparent={true}
             visible={visible}
         >
