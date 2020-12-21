@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Modal,Text, ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
+import {View, Modal,Text, AsyncStorage,ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons'; 
@@ -24,12 +24,13 @@ const Log = ({item, selection}) => {
     );
 };
 
-const ModalButton = ({name, method, input}) => {
+const ModalButton = ({name, method, input, status}) => {
     return (
         <TouchableOpacity 
-            style={styles.modalButtons}
+            style={[styles.modalButtons, status && {backgroundColor: 'gray'}]}
             activeOpacity={0.7}
-            onPress={() => method(name==='Ok'? input: null)}
+            onPress={() => method(input)}
+            disabled={status}
             >
             <Text style={{color: '#fcf8ec'}}>{name}</Text>
         </TouchableOpacity>
@@ -77,20 +78,40 @@ const LogCreate = ({method, createLog}) => {
 }
 
 const ItemAdd = ({cancel, addItem}) => {
+    const [itemName, setItemName] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const [price, setPrice] = useState('');
+    const [btnSt, setBtnSt] = useState(true);
+
+    useEffect(() => {
+        if(itemName && price && quantity) setBtnSt(false); else setBtnSt(true); 
+    },[itemName, quantity, price]);
+
     return (
         <View style={[styles.modal__container, {height: 250}]}>
             <Text style={styles.modal__title}>Add Item</Text>
             <TextInput 
                 placeholder='Item Name'
                 style={styles.modal__input}
+                value={itemName}
+                maxLength={15}
+                onChangeText={e => setItemName(e)}
             />
             <TextInput 
                 placeholder='Quantity'
                 style={styles.modal__input}
+                keyboardType='numeric'
+                value={String(quantity)}
+                maxLength={4}
+                onChangeText={e => setQuantity(e)}
             />
             <TextInput 
                 placeholder='Price'
+                keyboardType='numeric'
                 style={styles.modal__input}
+                value={String(price)}
+                maxLength={4}
+                onChangeText={e => setPrice(e)}
             />
             <View style={styles.modalButtons__container}>
                 <ModalButton 
@@ -99,6 +120,9 @@ const ItemAdd = ({cancel, addItem}) => {
                 />
                 <ModalButton 
                     name='Add'
+                    status = {btnSt}
+                    method={addItem}
+                    input={{name: itemName, qt: quantity, price:price}}
                 />
             </View>
         </View>
@@ -116,35 +140,34 @@ const CreateIcon = ({enableModal}) => {
 };
 
 
+// {
+//     id: String(new Date().getTime()) + 'anniv',
+//     dateCreated: moment().format('LL'),
+//     name: 'Anniversary',
+//     items: [
+//         {name: 'Milk', qt: 1, price: 82.23},
+//         {name: 'Cereals', qt: 1, price: 123.54},
+//         {name: 'Chocolates', qt: 1, price: 478}
+//     ],
+//     total: 603.34
+// },
+// {
+//     id: String(new Date().getTime()) + 'school',
+//     dateCreated: moment().format('LL'),
+//     name: 'School',
+//     items: [
+//         {name: 'Pencils', qt: 1, price: 82},
+//         {name: 'Bond Paper', qt: 1, price: 232.212},
+//         {name: 'Notebooks', qt: 1, price: 478.11},
+//         {name: 'Books', qt: 1, price: 2178.11}
+//     ],
+//     total: 810.32
+// }
 
 //[CONTAINERS]
 const Home = ({navigation}) => {
     const [modalSt, setModalSt] = useState(false);
-    const [logs, setlogs] = useState([
-        {
-            id: 1,
-            dateCreated: moment().format('LL'),
-            name: 'Anniversary',
-            items: [
-                {name: 'Milk', qt: 1, price: 82.23},
-                {name: 'Cereals', qt: 1, price: 123.54},
-                {name: 'Chocolates', qt: 1, price: 478}
-            ],
-            total: 603.34
-        },
-        {
-            id: 2,
-            dateCreated: moment().format('LL'),
-            name: 'School',
-            items: [
-                {name: 'Pencils', qt: 1, price: 82},
-                {name: 'Bond Paper', qt: 1, price: 232.212},
-                {name: 'Notebooks', qt: 1, price: 478.11},
-                {name: 'Books', qt: 1, price: 2178.11}
-            ],
-            total: 810.32
-        }
-    ]);
+    const [logs, setlogs] = useState([]);
 
     const handleSelection = (logItem) => {
         navigation.navigate('LogPage', {item: logItem});
@@ -153,6 +176,26 @@ const Home = ({navigation}) => {
     const handleTriggerModal = () => {
         setModalSt(!modalSt);
     };
+
+    useEffect(() => {
+        AsyncStorage.getAllKeys()
+         .then(keys => {
+             console.log(keys);
+             let logsAccu = []
+             keys.forEach(key => {
+                 AsyncStorage.getItem(key)
+                    .then(item => {
+                        logsAccu = [JSON.parse(item), ...logsAccu]
+                        setlogs(logsAccu);
+                    })
+             });
+             console.log('Logs ACCU: ',logsAccu);
+         })
+    },[]);
+
+    // useEffect(() => {
+    //     console.log(logs);
+    // },[logs]);
 
     const handleCreate = (logName) => {
         if(!logName) return;
@@ -164,7 +207,11 @@ const Home = ({navigation}) => {
             name: logName,
             items: [],
             total: 0.0
-        }
+        };
+        AsyncStorage.setItem(
+            String(newData.id),
+            JSON.stringify(newData) 
+        );
 
         setlogs([newData, ...logs]);
     };
@@ -204,13 +251,14 @@ const LogPage = ({navigation, route}) => {
     const [modalSt, setModalSt] = useState(false);
 
     useEffect(() => {
-        setItems(route.params.item.items)
+        setItems(route.params.item.items);
+        console.log(new Date().getTime())
     },[]);
 
     useEffect(() => {
         let priceAccu = 0;
         items && items.forEach(item => {
-            priceAccu = priceAccu + item.price;
+            priceAccu = priceAccu + (Number(item.price) * Number(item.qt));
         });
         setTotalPrice(priceAccu.toFixed(2));
     },[items])
@@ -223,18 +271,34 @@ const LogPage = ({navigation, route}) => {
         setModalSt(!modalSt);
     };
 
+    const handleItemAdd = (item) => {
+        console.log('Adding...', item)
+        // let newData = {
+        //     id: moment().format(),
+        //     dateCreated: moment().format('LL'),
+        //     name: logName,
+        //     items: [],
+        //     total: 0.0
+        // }
+        setItems([item, ...items])
+        let newData = Object.assign(route.params.item)
+        newData.items = [item, ...items];
+    };
+
     return(
         <View style={styles.logPage}>
             <View style={styles.total__container}>
                 <Text style={styles.total__price}>{totalPrice}</Text>
                 <Text>Total Price</Text>
             </View>
-            {route.params.item.items.map(item => (
+            {items?.map(item => (
                 <Items item={item} key={item.name + item.price} />
             ))}
             <CreateIcon enableModal={handleTriggerModal}/>
             <ModalCreate visible={modalSt}>
-                <ItemAdd cancel={handleTriggerModal}/>
+                <ItemAdd 
+                    cancel={handleTriggerModal} 
+                    addItem={handleItemAdd}/>
             </ModalCreate>
         </View>
     );
