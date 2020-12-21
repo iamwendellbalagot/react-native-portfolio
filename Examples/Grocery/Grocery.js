@@ -1,18 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {View, Modal,Text, LogBox,Alert, AsyncStorage,ScrollView, TouchableOpacity, TextInput, Button} from 'react-native';
-import {NavigationContainer, StackActions} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import {SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import moment from 'moment';
 
 import {styles} from './styles';
-
-// LogBox.ignoreWarnings();
-
-LogBox.ignoreLogs([
-    'Non-serializable values were found in the navigation state',
-]);
 
 //[COMPONENTS]
 const Log = ({item, selection}) => {
@@ -60,9 +54,6 @@ const ModalCreate = ({visible, children}) => {
 
 const LogCreate = ({method, createLog}) => {
     const [input, setInput] = useState('');
-    // useEffect(() => {
-    //     return () => setInput('');
-    // },[visible])
     return (
         <View style={styles.modal__container}>
             <Text style={styles.modal__title}>Create Log</Text>
@@ -82,7 +73,16 @@ const LogCreate = ({method, createLog}) => {
             </View>
         </View>
     );
-}
+};
+
+const Items =({item}) => {
+    return (
+        <TouchableOpacity style={styles.items} activeOpacity={0.7}>
+            <Text style={styles.item__name}>{`${item.name} x${item.qt}`}</Text>
+            <Text style={styles.item__price}>{`${Number(item.price) * Number(item.qt)}`}</Text>
+        </TouchableOpacity>
+    );
+};
 
 const ItemAdd = ({cancel, addItem}) => {
     const [itemName, setItemName] = useState('');
@@ -93,6 +93,13 @@ const ItemAdd = ({cancel, addItem}) => {
     useEffect(() => {
         if(itemName && price && quantity) setBtnSt(false); else setBtnSt(true); 
     },[itemName, quantity, price]);
+
+    const  generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+    };
 
     return (
         <View style={[styles.modal__container, {height: 250}]}>
@@ -117,7 +124,7 @@ const ItemAdd = ({cancel, addItem}) => {
                 keyboardType='numeric'
                 style={styles.modal__input}
                 value={String(price)}
-                maxLength={4}
+                maxLength={8}
                 onChangeText={e => setPrice(e)}
             />
             <View style={styles.modalButtons__container}>
@@ -129,7 +136,7 @@ const ItemAdd = ({cancel, addItem}) => {
                     name='Add'
                     status = {btnSt}
                     method={addItem}
-                    input={{name: itemName, qt: quantity, price:price}}
+                    input={{name: itemName, qt: quantity, price:price, id: generateUUID()}}
                 />
             </View>
         </View>
@@ -145,31 +152,6 @@ const CreateIcon = ({enableModal}) => {
         </TouchableOpacity>
     );
 };
-
-
-// {
-//     id: String(new Date().getTime()) + 'anniv',
-//     dateCreated: moment().format('LL'),
-//     name: 'Anniversary',
-//     items: [
-//         {name: 'Milk', qt: 1, price: 82.23},
-//         {name: 'Cereals', qt: 1, price: 123.54},
-//         {name: 'Chocolates', qt: 1, price: 478}
-//     ],
-//     total: 603.34
-// },
-// {
-//     id: String(new Date().getTime()) + 'school',
-//     dateCreated: moment().format('LL'),
-//     name: 'School',
-//     items: [
-//         {name: 'Pencils', qt: 1, price: 82},
-//         {name: 'Bond Paper', qt: 1, price: 232.212},
-//         {name: 'Notebooks', qt: 1, price: 478.11},
-//         {name: 'Books', qt: 1, price: 2178.11}
-//     ],
-//     total: 810.32
-// }
 
 //[CONTAINERS]
 const Home = ({navigation}) => {
@@ -202,12 +184,7 @@ const Home = ({navigation}) => {
 
     useEffect(() => {
         updateLogs();
-        //navigation.setParams({updateLogs: (() => updateLogs())})
     },[]);
-
-    // useEffect(() => {
-    //     console.log(logs);
-    // },[logs]);
 
     const handleCreate = (logName) => {
         if(!logName) return;
@@ -261,6 +238,7 @@ const Home = ({navigation}) => {
             <SwipeListView 
                 data={logs}
                 renderItem={data => (
+                    <ScrollView>
                     <View style={styles.rowFront}>
                         <Log 
                             item={data.item} 
@@ -268,6 +246,7 @@ const Home = ({navigation}) => {
                             selection= {handleSelection} 
                         />
                     </View>
+                    </ScrollView>
                 )}
                 renderHiddenItem={data => (
                     <TouchableOpacity 
@@ -288,13 +267,6 @@ const Home = ({navigation}) => {
                 leftOpenValue={55}
                 rightOpenValue={-55}
             />
-            {/* {logs.map(log => (
-                <Log 
-                    item={log} 
-                    key={log.id}
-                    selection= {handleSelection} 
-                    />
-            ))} */}
             <CreateIcon enableModal={handleTriggerModal}/>
             <ModalCreate visible={modalSt}>
                 <LogCreate 
@@ -302,16 +274,6 @@ const Home = ({navigation}) => {
                 createLog={handleCreate}/>
             </ModalCreate>
         </View>
-    );
-};
-
-
-const Items =({item}) => {
-    return (
-        <TouchableOpacity style={styles.items} activeOpacity={0.7}>
-            <Text style={styles.item__name}>{`${item.name} x${item.qt}`}</Text>
-            <Text>{item.price}</Text>
-        </TouchableOpacity>
     );
 };
 
@@ -355,12 +317,42 @@ const LogPage = ({navigation, route}) => {
         let newData = Object.assign(route.params.item);
         newData.items = [item, ...items];
         newData.total = counter(newData.items)
-        // console.log(newData);
+        handleTriggerModal();
         AsyncStorage.setItem(
             route.params.item.id,
             JSON.stringify(newData)
         ).then(res => route.params.updateLogs());
         
+    };
+
+    const handleDeleteItem = (logItem, index) => {
+        const deleteItemOnStorage = () => {
+            let newData = Object.assign(route.params.item);
+            newData.items.splice(logItem.index, 1)
+            newData.total = String(counter(newData.items))
+            setItems([newData.items]);
+            AsyncStorage.setItem(route.params.item.id, JSON.stringify(newData))
+            .then(res => {
+                route.params.updateLogs();
+                setItems(route.params.item.items);
+            });
+        }
+        
+        Alert.alert(
+            'Delete',
+            'Are you sure you want to detete this item?',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancelled'),
+                    style: 'cancel'
+                },
+                {
+                    text: 'Delete',
+                    onPress: () => deleteItemOnStorage()
+                }
+            ]
+        );
     };
 
     return(
@@ -372,14 +364,17 @@ const LogPage = ({navigation, route}) => {
             <SwipeListView 
                 data={items}
                 renderItem={data => (
-                    <View style={[styles.rowFront, {borderBottomWidth: 0, height: 50, backgroundColor: '#ccc'}]}>
-                        <Items 
-                            item={data.item} />
-                    </View>
+                    <ScrollView>
+                        <View style={[styles.rowFront, {borderBottomWidth: 0, height: 50, backgroundColor: '#ccc'}]}>
+                            <Items 
+                                item={data.item} />
+                        </View>
+                    </ScrollView>
                 )}
-                keyExtractor = {(data) => data.name + data.price}
-                renderHiddenItem={data => (
+                keyExtractor= {data => data.id}
+                renderHiddenItem={(data, mapRow) => (
                     <TouchableOpacity
+                        onPress={() => handleDeleteItem(data, mapRow)}
                         style={styles.rowBack} >
                         <MaterialIcons name="delete" size={24} color="black" />
                         <MaterialIcons name="delete" size={24} color="black" />
@@ -396,9 +391,6 @@ const LogPage = ({navigation, route}) => {
                 leftOpenValue={55}
                 rightOpenValue={-55}
             />
-            {/* {items?.map(item => (
-                <Items item={item} key={item.name + item.price} />
-            ))} */}
             <CreateIcon enableModal={handleTriggerModal}/>
             <ModalCreate visible={modalSt}>
                 <ItemAdd 
@@ -410,6 +402,10 @@ const LogPage = ({navigation, route}) => {
 };
 
 const App = () => {
+    LogBox.ignoreLogs([
+        'Non-serializable values were found in the navigation state',
+        'Failed child context type: Invalid child context'
+    ]);
     const Stack = createStackNavigator();
     return (
         <NavigationContainer>

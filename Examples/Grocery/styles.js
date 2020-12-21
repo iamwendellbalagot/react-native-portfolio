@@ -117,7 +117,12 @@ export const styles = StyleSheet.create({
     item__name: {
         color: '#456268',
         fontSize: 18,
+        fontWeight: 'bold'
         
+    },
+    item__price: {
+        color: 'black',
+        fontSize: 18
     },
     rowBack: {
         alignItems: 'center',
