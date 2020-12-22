@@ -38,9 +38,14 @@ export const styles = StyleSheet.create({
     board: {
         borderWidth: 2,
         borderColor: '#433d3c',
+        backgroundColor: '#ccc',
         height: 400,
+        flexWrap: 'wrap',
         width:'95%',
-        borderRadius: 5
+        borderRadius: 5,
+        paddingVertical: 15,
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     timer: {
         marginTop: 20,
@@ -61,5 +66,20 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ecb390'
+    },
+    numberBtn: {
+        backgroundColor: '#433d3c',
+        height: 63,
+        width: 63,
+        marginHorizontal: 12,
+        marginVertical: 14,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    numberBtn__title: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        color: '#fcf8e8'
     }
 });
