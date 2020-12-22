@@ -11,7 +11,8 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#433d3c',
         paddingVertical: 20,
-        marginTop: 30
+        marginTop: 30,
+        fontFamily: 'sans-serif-condensed'
     },
     startStop: {
         backgroundColor: '#df7861',
@@ -21,12 +22,44 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 5
     },
+    level: {
+        alignSelf: 'flex-start',
+        marginLeft: 15,
+        marginBottom: 10,
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    board__container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: 20
+    },
     board: {
         borderWidth: 2,
         borderColor: '#433d3c',
         height: 400,
         width:'95%',
-        marginTop: 40,
         borderRadius: 5
+    },
+    timer: {
+        marginTop: 20,
+        fontSize: 40,
+        fontFamily: 'monospace',
+        color: '#9dab86'
+    },
+    bottomIcons__container: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: 200,
+        marginTop: 20
+    },
+    bottomIcons: {
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ecb390'
     }
 });
