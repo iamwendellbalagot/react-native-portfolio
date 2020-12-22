@@ -90,5 +90,33 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         color: '#fcf8e8'
+    },
+    modal__failed: {
+        height: 230,
+        width: '80%',
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fcf8e8',
+        borderRadius: 10,
+        borderColor: 'salmon',
+        borderWidth: 2
+    },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    mf__title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'salmon'
+    },
+    mf__btn: {
+        paddingHorizontal: 40,
+        paddingVertical: 10,
+        backgroundColor: '#70af85',
+        borderRadius: 10
     }
 });

@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { View, Text, TouchableOpacity, Modal } from 'react-native';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
 
 import {styles} from './styles';
-import { acc } from 'react-native-reanimated';
 
 const StartStop = ({method, start}) => {
     return (
@@ -12,6 +11,56 @@ const StartStop = ({method, start}) => {
                 color: '#d4e2d4',
                 fontSize: 20}}>{start? 'Stop': 'Start'}</Text>
         </TouchableOpacity>
+    );
+};
+
+const Timer = () => {
+    return (
+        <View >
+            <Text style={styles.timer}>{'00:00'}</Text>
+        </View>
+    );
+};
+
+const BottomIcons = ({type}) => {
+    return (
+        <TouchableOpacity style={styles.bottomIcons}>
+            <MaterialCommunityIcons name={type} size={24} color="black" />
+        </TouchableOpacity> 
+    );
+};
+
+const CreateModal = ({visible, children}) => {
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={visible}
+            style={{backgroundColor: 'black'}}
+        >
+            <View style={styles.modal}>
+                {children}
+            </View>
+        </Modal>
+    );
+};
+
+const FailedResult = ({visible, closeModal}) => {
+    return (
+        <View>
+            <CreateModal visible={visible}>
+                <View style={styles.modal__failed}>
+                    <Text style={styles.mf__title}>Oh snap, you failed.</Text>
+                    <MaterialIcons name="mood-bad" size={120} color="black" />
+                    <TouchableOpacity 
+                        style={styles.mf__btn}
+                        onPress={closeModal}    
+                    >
+                        <Text style={{color: '#fcf8e8', fontWeight: 'bold'}}>Try Again</Text>
+                    </TouchableOpacity>
+                </View>
+            </CreateModal>
+        </View>
     );
 };
 
@@ -36,36 +85,23 @@ const NumberBtn = ({item, display, start, addItem, accu, failed}) => {
     );
 };
 
-const Timer = () => {
-    return (
-        <View >
-            <Text style={styles.timer}>{'00:00'}</Text>
-        </View>
-    );
-};
-
-const BottomIcons = ({type}) => {
-    return (
-        <TouchableOpacity style={styles.bottomIcons}>
-            <MaterialCommunityIcons name={type} size={24} color="black" />
-        </TouchableOpacity> 
-    );
-}
-
-const Board =({items, level, start, stop}) => {
+const Board =({items, level, setLevel, start, stop}) => {
     const [numberOfChips, setNumberOfChips] = useState(Array.from(Array(level+3).keys()).slice(1));
     const [accumulator, setAccumulator] = useState([]);
     const [failed, setFailed] = useState(false);
+    const [modalFailed, setModalFailed] = useState(false)
 
     useEffect(() => {
         console.log(numberOfChips);
         level<=14 && setNumberOfChips(Array.from(Array(level+3).keys()).slice(1));
     }, [level]);
 
-    // useEffect(() => {
-    //     console.log(accumulator);
-    //     console.log(accumulator.slice(-1)[0], ' Arrya slice');
-    // },[accumulator])
+    useEffect(() => {
+        if(accumulator.length != 0 && accumulator.length === numberOfChips.length ){
+            setAccumulator([]);
+            setLevel(level + 1);
+        }
+    },[accumulator])
 
     useEffect(() => {
         if(!start){
@@ -77,8 +113,13 @@ const Board =({items, level, start, stop}) => {
     useEffect(() => {
         if(failed){
             stop();
+            setModalFailed(true);
         }
     },[failed])
+
+    const handleCloseModal = () => {
+        setModalFailed(false)
+    };
 
     const addItem = (item) => {
         if(accumulator.length === 0){
@@ -101,7 +142,7 @@ const Board =({items, level, start, stop}) => {
     
     return (
         <View style={styles.board__container}>
-            <Text style={styles.level}>{`Level: ${'15'}`}</Text>
+            <Text style={styles.level}>{`Level: ${level}`}</Text>
             <View style={styles.board}>
                 {items.map(it => (
                     <NumberBtn 
@@ -114,13 +155,14 @@ const Board =({items, level, start, stop}) => {
                     />
                 ))}
             </View>
+            <FailedResult visible={modalFailed} closeModal={handleCloseModal}/>
         </View>
     );
 };
 
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-    const [level, setLevel] = useState(3);
+    const [level, setLevel] = useState(1);
     const [start, setStart] = useState(false);
 
     const shuffleArray = (array) => {
@@ -150,12 +192,14 @@ const App = () => {
 
     const handleStop = () => {
         setStart(false);
+        setLevel(1);
         setChips([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
     };
 
-    // useEffect(() => {
-    //     console.log(chips);
-    // }, [chips]);
+    useEffect(() => {
+        let newArray = shuffleArray(chips);
+        level> 1 && setChips(newArray);
+    }, [level]);
 
     return (
         <View style={styles.app}>
@@ -163,7 +207,12 @@ const App = () => {
                 <Text style={styles.app__title}>MemApp</Text>
                 <StartStop method={start? handleStop: handleStart} start={start}/>
             </View>
-            <Board items={chips} level={level} start={start} stop={handleStop}/>
+            <Board 
+                items={chips} 
+                level={level} 
+                setLevel={setLevel}
+                start={start} 
+                stop={handleStop}/>
             <Timer />
             <View style={styles.bottomIcons__container}>
                 <BottomIcons type={'google-play'}/>
