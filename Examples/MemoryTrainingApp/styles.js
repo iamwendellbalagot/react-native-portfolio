@@ -77,9 +77,19 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    numberBtn_proxy: {
+        height: 63,
+        width: 63,
+        marginHorizontal: 12,
+        marginVertical: 14,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     numberBtn__title: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: '#fcf8e8'
+        color: '#fcf8e8',
+        
     }
 });

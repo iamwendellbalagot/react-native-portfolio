@@ -4,27 +4,30 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {styles} from './styles';
 
-const StartStop = ({method}) => {
+const StartStop = ({method, start}) => {
     return (
         <TouchableOpacity style={styles.startStop} onPress={() =>method()}>
             <Text style={{fontWeight:'bold',
                 color: '#d4e2d4',
-                fontSize: 20}}>{'Start'}</Text>
+                fontSize: 20}}>{start? 'Stop': 'Start'}</Text>
         </TouchableOpacity>
     );
 };
 
-const NumberBtn = ({item}) => {
+const NumberBtn = ({item, display, start}) => {
     const handleClicked = (num) => {
         console.log(num);
     }
     return (
-        <TouchableOpacity 
-            style={styles.numberBtn} 
-            activeOpacity={0.7}
-            onPress={() => handleClicked(item)}>
-            <Text style={styles.numberBtn__title}>{item}</Text>
-        </TouchableOpacity>
+        <View style={styles.numberBtn_proxy}>
+            <TouchableOpacity 
+                style={[styles.numberBtn, {display: !display && start ? 'none' : 'flex'}]} 
+                activeOpacity={0.7}
+                onPress={() => handleClicked(item)}>
+                <Text style={styles.numberBtn__title}>{item}</Text>
+            </TouchableOpacity>
+        </View>
+        
     );
 };
 
@@ -44,7 +47,7 @@ const BottomIcons = ({type}) => {
     );
 }
 
-const Board =({items, level}) => {
+const Board =({items, level, start}) => {
     const [numberOfChips, setNumberOfChips] = useState(Array.from(Array(level+3).keys()).slice(1));
     useEffect(() => {
         console.log(numberOfChips);
@@ -56,7 +59,12 @@ const Board =({items, level}) => {
             <Text style={styles.level}>{`Level: ${'15'}`}</Text>
             <View style={styles.board}>
                 {items.map(it => (
-                    <NumberBtn item={it} key={it}/>
+                    <NumberBtn 
+                        item={it} 
+                        key={it}
+                        start = {start}
+                        display={numberOfChips.includes(it)}    
+                    />
                 ))}
             </View>
         </View>
@@ -65,7 +73,8 @@ const Board =({items, level}) => {
 
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(5);
+    const [start, setStart] = useState(false);
 
     const shuffleArray = (array) => {
         var currentIndex = array.length, temporaryValue, randomIndex;
@@ -89,7 +98,12 @@ const App = () => {
     const handleStart = () => {
         let newArray = shuffleArray(chips);
         setChips(newArray);
-        setLevel(level + 1);
+        setStart(true);
+    };
+
+    const handleStop = () => {
+        setStart(false);
+        setChips([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
     };
 
     // useEffect(() => {
@@ -100,9 +114,9 @@ const App = () => {
         <View style={styles.app}>
             <View style={{alignItems: 'center'}}>
                 <Text style={styles.app__title}>MemApp</Text>
-                <StartStop method={handleStart}/>
+                <StartStop method={start? handleStop: handleStart} start={start}/>
             </View>
-            <Board items={chips} level={level}/>
+            <Board items={chips} level={level} start={start}/>
             <Timer />
             <View style={styles.bottomIcons__container}>
                 <BottomIcons type={'google-play'}/>
