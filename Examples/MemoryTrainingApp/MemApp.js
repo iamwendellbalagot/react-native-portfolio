@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
+import moment from 'moment';
 
 import {styles} from './styles';
 
@@ -14,13 +15,7 @@ const StartStop = ({method, start}) => {
     );
 };
 
-const Timer = () => {
-    return (
-        <View >
-            <Text style={styles.timer}>{'00:00'}</Text>
-        </View>
-    );
-};
+
 
 const BottomIcons = ({type}) => {
     return (
@@ -76,7 +71,7 @@ const NumberBtn = ({item, display, start, addItem, accu, failed}) => {
                         backgroundColor: start && accu.includes(item) ? chipColor : '#433d3c' ,
                         }]} 
                 activeOpacity={0.7}
-                disabled={!start}
+                disabled={!start || accu.includes(item)}
                 onPress={() => addItem(item)}>
                 <Text style={styles.numberBtn__title}>{accu.length ===0 || accu.includes(item) ? item : '' }</Text>
             </TouchableOpacity>
@@ -160,10 +155,33 @@ const Board =({items, level, setLevel, start, stop}) => {
     );
 };
 
+const Timer = ({start}) => {
+    const [timer, setTimer] = useState('00:00:00');
+    const [appTimer, setAppTimer] = useState(null);
+
+    const formatTimer = (n) => n < 10 ? '0' +n : n; 
+    useEffect(() => {
+        if (start) {
+            const timeNow = new Date().getTime();
+            setAppTimer(setInterval(() =>{
+                let timeElapsed = new Date().getTime() - timeNow;
+                let duration = moment.duration(timeElapsed);
+                setTimer(`${formatTimer(duration.minutes())}:${formatTimer(duration.seconds())}:${formatTimer(Math.floor(duration.milliseconds()/10))}`)
+            },100))
+        }else clearInterval(appTimer)
+    },[start]);
+    return (
+        <View >
+            <Text style={styles.timer}>{timer}</Text>
+        </View>
+    );
+};
+
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
     const [level, setLevel] = useState(1);
     const [start, setStart] = useState(false);
+    
 
     const shuffleArray = (array) => {
         var currentIndex = array.length, temporaryValue, randomIndex;
@@ -213,7 +231,7 @@ const App = () => {
                 setLevel={setLevel}
                 start={start} 
                 stop={handleStop}/>
-            <Timer />
+            <Timer start={start} />
             <View style={styles.bottomIcons__container}>
                 <BottomIcons type={'google-play'}/>
                 <BottomIcons type={'trophy-award'}/>
