@@ -89,7 +89,6 @@ export const styles = StyleSheet.create({
     numberBtn__title: {
         fontWeight: 'bold',
         fontSize: 20,
-        color: '#fcf8e8',
-        
+        color: '#fcf8e8'
     }
 });

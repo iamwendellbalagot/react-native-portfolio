@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import {styles} from './styles';
+import { acc } from 'react-native-reanimated';
 
 const StartStop = ({method, start}) => {
     return (
@@ -14,17 +15,21 @@ const StartStop = ({method, start}) => {
     );
 };
 
-const NumberBtn = ({item, display, start}) => {
-    const handleClicked = (num) => {
-        console.log(num);
-    }
+const NumberBtn = ({item, display, start, addItem, accu, failed}) => {
+    const [chipColor, setChipColor] = useState('#70af85');
+
     return (
         <View style={styles.numberBtn_proxy}>
             <TouchableOpacity 
-                style={[styles.numberBtn, {display: !display && start ? 'none' : 'flex'}]} 
+                style={[
+                    styles.numberBtn, 
+                    {display: !display && start ? 'none' : 'flex',
+                        backgroundColor: start && accu.includes(item) ? chipColor : '#433d3c' ,
+                        }]} 
                 activeOpacity={0.7}
-                onPress={() => handleClicked(item)}>
-                <Text style={styles.numberBtn__title}>{item}</Text>
+                disabled={!start}
+                onPress={() => addItem(item)}>
+                <Text style={styles.numberBtn__title}>{accu.length ===0 || accu.includes(item) ? item : '' }</Text>
             </TouchableOpacity>
         </View>
         
@@ -47,12 +52,52 @@ const BottomIcons = ({type}) => {
     );
 }
 
-const Board =({items, level, start}) => {
+const Board =({items, level, start, stop}) => {
     const [numberOfChips, setNumberOfChips] = useState(Array.from(Array(level+3).keys()).slice(1));
+    const [accumulator, setAccumulator] = useState([]);
+    const [failed, setFailed] = useState(false);
+
     useEffect(() => {
         console.log(numberOfChips);
         level<=14 && setNumberOfChips(Array.from(Array(level+3).keys()).slice(1));
     }, [level]);
+
+    // useEffect(() => {
+    //     console.log(accumulator);
+    //     console.log(accumulator.slice(-1)[0], ' Arrya slice');
+    // },[accumulator])
+
+    useEffect(() => {
+        if(!start){
+            setAccumulator([]);
+            setFailed(false);
+        }
+    },[start])
+
+    useEffect(() => {
+        if(failed){
+            stop();
+        }
+    },[failed])
+
+    const addItem = (item) => {
+        if(accumulator.length === 0){
+            if(item != 1){
+                setFailed(true);
+                return
+            }else setAccumulator([...accumulator,item]);
+        }else{
+            console.log(accumulator.slice(-1)[0], ': Pops: ', item )
+            if((item - accumulator.slice(-1)[0]) != 1 ){
+                console.log(accumulator.slice(-1)[0], item);
+                setAccumulator([...accumulator, item]);
+                setFailed(true);
+                setAccumulator([]);
+                return
+            }else setAccumulator([...accumulator, item]);
+        }
+        
+    };
     
     return (
         <View style={styles.board__container}>
@@ -63,6 +108,8 @@ const Board =({items, level, start}) => {
                         item={it} 
                         key={it}
                         start = {start}
+                        addItem= {addItem}
+                        accu = {accumulator}
                         display={numberOfChips.includes(it)}    
                     />
                 ))}
@@ -73,7 +120,7 @@ const Board =({items, level, start}) => {
 
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-    const [level, setLevel] = useState(5);
+    const [level, setLevel] = useState(3);
     const [start, setStart] = useState(false);
 
     const shuffleArray = (array) => {
@@ -116,7 +163,7 @@ const App = () => {
                 <Text style={styles.app__title}>MemApp</Text>
                 <StartStop method={start? handleStop: handleStart} start={start}/>
             </View>
-            <Board items={chips} level={level} start={start}/>
+            <Board items={chips} level={level} start={start} stop={handleStop}/>
             <Timer />
             <View style={styles.bottomIcons__container}>
                 <BottomIcons type={'google-play'}/>
