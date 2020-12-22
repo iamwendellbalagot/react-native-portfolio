@@ -118,5 +118,10 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
         backgroundColor: '#70af85',
         borderRadius: 10
+    },
+    bestScore: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#433d3c'
     }
 });

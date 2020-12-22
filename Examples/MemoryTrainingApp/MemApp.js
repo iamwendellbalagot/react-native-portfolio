@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, Modal } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
+import { View, Text, TouchableOpacity, Modal, AsyncStorage } from 'react-native';
+import { MaterialCommunityIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
 import moment from 'moment';
 
 import {styles} from './styles';
+import { set } from 'react-native-reanimated';
 
 const StartStop = ({method, start}) => {
     return (
@@ -17,9 +18,9 @@ const StartStop = ({method, start}) => {
 
 
 
-const BottomIcons = ({type}) => {
+const BottomIcons = ({type, method}) => {
     return (
-        <TouchableOpacity style={styles.bottomIcons}>
+        <TouchableOpacity style={styles.bottomIcons} onPress={method}>
             <MaterialCommunityIcons name={type} size={24} color="black" />
         </TouchableOpacity> 
     );
@@ -52,6 +53,41 @@ const FailedResult = ({visible, closeModal}) => {
                         onPress={closeModal}    
                     >
                         <Text style={{color: '#fcf8e8', fontWeight: 'bold'}}>Try Again</Text>
+                    </TouchableOpacity>
+                </View>
+            </CreateModal>
+        </View>
+    );
+};
+
+const BestScore = ({visible, closeModal, bestScore}) => {
+    const [bestTime, setBestTime] = useState(0);
+    const [bestLevel, setBestLevel] = useState(1);
+
+    useEffect(() => {
+        if(bestScore){
+            console.log(bestScore);
+            let duration = moment.duration(bestScore.time);
+            const formatTimer = (n) => n < 10 ? '0' +n : n;
+            setBestTime(`${formatTimer(duration.minutes())}:${formatTimer(duration.seconds())}:${formatTimer(Math.floor(duration.milliseconds()/10))}`)
+            setBestLevel(bestScore.level)
+        };
+    }, [visible])
+    return (
+        <View>
+            <CreateModal visible={visible}>
+                <View style={[styles.modal__failed, {borderRadius: 100}]}>
+                    <Text style={styles.mf__title}>Best Score</Text>
+                    <FontAwesome name="trophy" size={80} color="black" />
+                    <View style={{justifyContent: 'center', alignItems: 'center', paddingVertical:10}}>
+                        <Text style={styles.bestScore}>{`Level: ${bestLevel}`}</Text>
+                        <Text style={styles.bestScore}>{`Total Time: ${bestTime} `}</Text>
+                    </View>
+                    <TouchableOpacity 
+                        style={styles.mf__btn}
+                        onPress={closeModal}    
+                    >
+                        <Text style={{color: '#fcf8e8', fontWeight: 'bold'}}>Close</Text>
                     </TouchableOpacity>
                 </View>
             </CreateModal>
@@ -155,20 +191,28 @@ const Board =({items, level, setLevel, start, stop}) => {
     );
 };
 
-const Timer = ({start}) => {
+const Timer = ({start, setBestScore}) => {
     const [timer, setTimer] = useState('00:00:00');
+    const [timeDummy, setTimeDummy] = useState(0);
     const [appTimer, setAppTimer] = useState(null);
-
+    
     const formatTimer = (n) => n < 10 ? '0' +n : n; 
     useEffect(() => {
         if (start) {
             const timeNow = new Date().getTime();
             setAppTimer(setInterval(() =>{
                 let timeElapsed = new Date().getTime() - timeNow;
+                setTimeDummy(timeElapsed);
                 let duration = moment.duration(timeElapsed);
                 setTimer(`${formatTimer(duration.minutes())}:${formatTimer(duration.seconds())}:${formatTimer(Math.floor(duration.milliseconds()/10))}`)
             },100))
-        }else clearInterval(appTimer)
+        }else{
+            clearInterval(appTimer)
+            if(timeDummy != 0){
+                setBestScore(timeDummy);
+                setTimeDummy(0);
+            }
+        }
     },[start]);
     return (
         <View >
@@ -179,21 +223,17 @@ const Timer = ({start}) => {
 
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(6);
     const [start, setStart] = useState(false);
+    const [modal, setModal] = useState(false);
+    const [bestScore, setBestScore] = useState(null);
     
 
     const shuffleArray = (array) => {
-        var currentIndex = array.length, temporaryValue, randomIndex;
-      
-        // While there remain elements to shuffle...
+        let currentIndex = array.length, temporaryValue, randomIndex;
         while (0 !== currentIndex) {
-      
-          // Pick a remaining element...
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex -= 1;
-      
-          // And swap it with the current element.
           temporaryValue = array[currentIndex];
           array[currentIndex] = array[randomIndex];
           array[randomIndex] = temporaryValue;
@@ -202,22 +242,57 @@ const App = () => {
         return [...array];
     };
 
+    useEffect(() => {
+        AsyncStorage.getItem('MemAppData')
+        .then(res =>{
+            res && setBestScore(JSON.parse(res));
+        });
+
+        return () => setLevel(1);
+    },[start])
+
     const handleStart = () => {
         let newArray = shuffleArray(chips);
+        setLevel(1);
         setChips(newArray);
         setStart(true);
     };
 
     const handleStop = () => {
         setStart(false);
-        setLevel(1);
         setChips([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
+    };
+
+    const handleBestScore = (time) => {
+        AsyncStorage.getItem('MemAppData')
+        .then(res => {
+            !res && AsyncStorage.setItem('MemAppData',
+                JSON.stringify({
+                    time: time,
+                    level: level
+                })
+            )
+
+            if(res){
+                let data = JSON.parse(res);
+                console.log(time, level, ' level data');
+                if((level=== data.level && time< data.time) || (level>data.level )){
+                    AsyncStorage.setItem('MemAppData',
+                        JSON.stringify({level: level, time: time})
+                    ).then(_res => setBestScore({level: level, time: time}))
+                }
+            }
+        })
     };
 
     useEffect(() => {
         let newArray = shuffleArray(chips);
         level> 1 && setChips(newArray);
     }, [level]);
+
+    const handleModal = () => {
+        setModal(!modal);
+    };
 
     return (
         <View style={styles.app}>
@@ -231,12 +306,19 @@ const App = () => {
                 setLevel={setLevel}
                 start={start} 
                 stop={handleStop}/>
-            <Timer start={start} />
+            <Timer start={start} setBestScore={handleBestScore} />
             <View style={styles.bottomIcons__container}>
                 <BottomIcons type={'google-play'}/>
-                <BottomIcons type={'trophy-award'}/>
+                <BottomIcons type={'trophy-award'} method={handleModal} />
                 <BottomIcons type={'crosshairs-question'}/>
             </View>
+
+            <BestScore 
+                visible={modal} 
+                closeModal={handleModal} 
+                bestScore={bestScore}
+            />
+               
         </View>
     )
 }
