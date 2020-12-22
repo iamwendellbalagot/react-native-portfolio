@@ -5,10 +5,11 @@ import Navigation from './container/Navigation/Navigation';
 import Login from './Examples/Login/Login';
 import Stopwatch from './Examples/Stopwatch/Stopwatch';
 import GroceryApp from './Examples/Grocery/Grocery';
+import MemApp from './Examples/MemoryTrainingApp/MemApp';
 
 const Main = () => {
   return (
-    <GroceryApp />
+    <MemApp />
   );
 }
 
