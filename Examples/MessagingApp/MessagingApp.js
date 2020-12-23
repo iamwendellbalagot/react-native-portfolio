@@ -13,25 +13,21 @@ import {auth,db} from '../Login/firebase'
 
 const Home = () => {
 
-    const dispatch = useDispatch();
-    const contacts = useSelector(getContacts)
+    // const dispatch = useDispatch();
+    // const contacts = useSelector(getContacts)
 
-    const handleClick = () => {
-        dispatch(setContacts({
-            items: ['Keqing', 'Klee', 'Diluc']
-        }))
-    }
+    // const handleClick = () => {
+    //     dispatch(setContacts({
+    //         items: ['Keqing', 'Klee', 'Diluc']
+    //     }))
+    // }
 
-    useEffect(() => {
-        console.log(contacts)
-    }, [contacts])
-    
+    // useEffect(() => {
+    //     console.log(contacts)
+    // }, [contacts])
+
     return (
         <View style={s.app}>
-            <Text onPress={handleClick}>MessagingAPP</Text>
-            {/* {contacts? contacts.map((c,i) => (
-                    <Text key={c.items[i]}>{c.items[i]}</Text>
-                )) : null} */}
         </View>
     )
 }
@@ -41,12 +37,22 @@ const App = () => {
     return (
         <NavigationContainer>
             <Provider store={store}>
-                <Stack.Navigator>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerStyle: {
+                            backgroundColor: '#394867'
+                        },
+                        headerTitleStyle: {
+                            alignSelf: 'center'
+                        },
+                        headerTintColor: '#f1f6f9'
+                    }}
+                >
                     <Stack.Screen 
-                        name='Home'
+                        name='Messages'
                         component={Home}
                         options={{
-                            title: 'Home'
+                            title: 'Messages'
                         }}
                     />
                 </Stack.Navigator>
