@@ -1,4 +1,10 @@
 # REACT NATIVE PORTFOLIO
+
+### Memory Training Game
+*Ayumu inspired memory training game.*<br />
+*Code:  https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/MemoryTrainingApp/MemApp.js* <br/><br/>
+
+<img src="https://drive.google.com/uc?export=view&id=1CrD3d43eQZuM4WJqeXpxWZNcsNWQmc6s" width="250" height="500" />
  
 ### STOPWATCH
 *An IOS system like stopwatch, fully functioned as the system app.*<br />
