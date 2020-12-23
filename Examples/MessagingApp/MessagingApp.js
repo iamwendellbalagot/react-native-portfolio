@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { FontAwesome } from '@expo/vector-icons'; 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 
@@ -10,8 +11,23 @@ import store from './store'
 import {s} from './styles'
 import firebase from 'firebase'
 import {auth,db} from '../Login/firebase'
+import { TextInput } from 'react-native-gesture-handler';
 
-const Home = () => {
+const Search = ({size, color}) => {
+    return (
+        <View style={s.search}>
+            <TextInput 
+                placeholder='Search message'
+                style={s.search__input}
+            />
+            <FontAwesome name="search" size={size} color={color} />
+        </View>
+    )
+}
+
+
+
+const Home = ({navigation}) => {
 
     // const dispatch = useDispatch();
     // const contacts = useSelector(getContacts)
@@ -28,6 +44,7 @@ const Home = () => {
 
     return (
         <View style={s.app}>
+            <Search size={20} color='#14274e'/>
         </View>
     )
 }
