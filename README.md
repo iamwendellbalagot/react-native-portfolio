@@ -19,6 +19,6 @@ _A mobile app to create grocery shopping lists._<br />
 _Code: https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/Grocery/Grocery.js_<br /><br />
 <img src="https://drive.google.com/uc?export=view&id=1CVcPM98duI7x7IFhS1oBBWS4sqNiGmsr" width="250" height="500" /><br/>
 
-### LICENSE
+# License
 
-This repo is under MIT License.
+This repo is under the MIT License.
