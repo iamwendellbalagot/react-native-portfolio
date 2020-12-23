@@ -1,8 +1,9 @@
 # REACT NATIVE PORTFOLIO
 
 ### Memory Training Game
-*Ayumu inspired memory training game.*<br />
-*Code:  https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/MemoryTrainingApp/MemApp.js* <br/><br/>
+
+_Ayumu inspired memory training game._<br />
+_Code: https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/MemoryTrainingApp/MemApp.js_ <br/><br/>
 
 <img src="https://drive.google.com/uc?export=view&id=1CrD3d43eQZuM4WJqeXpxWZNcsNWQmc6s" width="250" height="500" />
  
@@ -13,6 +14,11 @@
 <img src="https://drive.google.com/uc?export=view&id=1CA2wy_LktHB41fdiEKwgXVMFbd6Q84dH" width="250" height="500" />
 
 ### Grocery App
-*A mobile app to create grocery shopping lists.*<br />
-*Code:  https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/Grocery/Grocery.js*<br /><br />
-<img src="https://drive.google.com/uc?export=view&id=1CVcPM98duI7x7IFhS1oBBWS4sqNiGmsr" width="250" height="500" />
+
+_A mobile app to create grocery shopping lists._<br />
+_Code: https://github.com/iamwendellbalagot/react-native-portfolio/blob/master/Examples/Grocery/Grocery.js_<br /><br />
+<img src="https://drive.google.com/uc?export=view&id=1CVcPM98duI7x7IFhS1oBBWS4sqNiGmsr" width="250" height="500" /><br/>
+
+### LICENSE
+
+This repo is under MIT License.
