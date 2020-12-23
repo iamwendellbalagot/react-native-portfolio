@@ -223,7 +223,7 @@ const Timer = ({start, setBestScore}) => {
 
 const App = () => {
     const [chips, setChips] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
-    const [level, setLevel] = useState(6);
+    const [level, setLevel] = useState(1);
     const [start, setStart] = useState(false);
     const [modal, setModal] = useState(false);
     const [bestScore, setBestScore] = useState(null);
