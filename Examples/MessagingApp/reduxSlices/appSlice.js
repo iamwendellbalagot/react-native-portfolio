@@ -3,8 +3,12 @@ import {createSlice} from '@reduxjs/toolkit'
 export const appSlice = createSlice({
     name: 'app',
     initialState: {
-        contacts: null,
-        loadedMessages: null
+        contacts: [
+            {name: 'Keqing', lm: 'Where are you?'},
+            {name: 'Zhongli', lm: 'Hey Traveler, I need money.'},
+            {name: 'Childe', lm: 'Oi lets play!!!'}
+        ],
+        loadedMessages: ['Where are you?', 'Come on!!', 'Fire mannn']
     },
     reducers: {
         setContacts: (state, action) => {

@@ -27,5 +27,31 @@ export const s = StyleSheet.create({
     },
     search__input: {
         flex: 0.9
+    },
+    contactTile: {
+        height: 80,
+        width: '100%',
+        flexDirection: 'row',
+        // borderWidth: 1,
+        // borderColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
+        paddingHorizontal: '2.5%'
+    },
+    tile__title: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 5,
+        // borderWidth: 1,
+        // borderColor: 'black',
+    },
+    tile__name: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    tile__mess: {
+        fontSize: 16
     }
 })
