@@ -6,10 +6,11 @@ import Login from './Examples/Login/Login';
 import Stopwatch from './Examples/Stopwatch/Stopwatch';
 import GroceryApp from './Examples/Grocery/Grocery';
 import MemApp from './Examples/MemoryTrainingApp/MemApp';
+import MessagingApp from './Examples/MessagingApp/MessagingApp';
 
 const Main = () => {
   return (
-    <MemApp />
+    <MessagingApp />
   );
 }
 
