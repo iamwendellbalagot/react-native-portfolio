@@ -76,7 +76,56 @@ export const s = StyleSheet.create({
         height: '100%',
         backgroundColor: colors.light,
         width: '100%',
+        alignItems: 'center',
+        flexDirection: 'column'
+    },
+    chat__header: {
+        flexDirection: 'row',
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: colors.light,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderBottomWidth:0,
+        elevation: 3,
+        shadowColor: colors.darkgray,
+        shadowOffset: {width: 1, height: 1},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 5
+    },
+    chat__header__text: {
+        color: colors.lightgray,
+        marginRight: 10,
+        flex: 0.15
+    },
+    // chat__header__input:{
+    //     flex: 0.85,
+    // },
+    chat__messagesCont: {
+        flex: 1,
+    },
+    message__inputCont: {
+        flexDirection: 'row',
+        paddingHorizontal: 5,
+        paddingVertical: 10,
+        alignItems: 'center',
         justifyContent: 'center',
-        alignItems: 'center'
+    },
+    message1: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        flex: 0.2
+    },
+    message2: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        paddingVertical: 10,
+        flex: 0.8,
+        borderWidth: 1,
+        borderColor: colors.darkblue,
+        borderRadius: 50,
     }
 })

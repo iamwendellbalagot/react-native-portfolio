@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { View, Text, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
 import { Avatar } from 'react-native-elements'
-import { FontAwesome, Entypo, MaterialIcons } from '@expo/vector-icons' 
+import { FontAwesome, Entypo, MaterialIcons, Ionicons } from '@expo/vector-icons' 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 
@@ -60,9 +60,29 @@ const StartChat = ({method}) => {
 
 const MessageInput =() => {
     return (
-    <View>
-
-    </View>
+    <View style={s.message__inputCont}>
+        <View style={s.message1}>
+            <Ionicons name="add-circle-outline" size={30} color="#14274e" />
+            <MaterialIcons name="monochrome-photos" size={30} color="#14274e" />
+        </View>
+        <View style={s.message2}>
+            <TextInput 
+                placeholder='Message'
+                style={{
+                    flex: 0.8,
+                    paddingLeft: 10
+                }}
+            />
+            <MaterialIcons 
+                name="insert-emoticon" 
+                size={30} 
+                color="#14274e" />
+            <Ionicons 
+                name="ios-send-sharp" 
+                size={30} 
+                color="#14274e" />
+        </View>
+    </View> 
     )
 }
 
@@ -88,11 +108,23 @@ const ContactTile = ({name, lastMessage}) => {
     )
 }
 
-const Messages = ({navigation}) => {
+const StartChatPage = ({navigation}) => {
     return (
-        <View style={s.messages}>
-            <Text>Hello This is Messages</Text>
-        </View>
+        
+            <View style={s.messages} >
+                <View style={{paddingBottom: 5, overflow: 'hidden', width: '100%'}}>
+                    <View style={s.chat__header}>
+                        <Text style={s.chat__header__text}>To</Text>
+                        <TextInput 
+                            placeholder='Contact ID'
+                        />
+                    </View>
+                </View>
+                <View style={s.chat__messagesCont}>
+
+                </View>
+                <MessageInput />
+            </View>
     )
 }
 
@@ -111,7 +143,7 @@ const Home = ({navigation}) => {
     const contacts = useSelector(getContacts)
 
     const navigateMessages = () => {
-        navigation.navigate('Messages')
+        navigation.navigate('StartChat')
     }
 
     return (
@@ -120,10 +152,13 @@ const Home = ({navigation}) => {
             <FlatList
                 style={{width: '100%'}} 
                 data={contacts}
-                renderItem={(data) => <ContactTile 
-                    name={data.item.name}
-                    lastMessage={data.item.lm}    
-                />}
+                renderItem={(data) => 
+                <ScrollView>
+                    <ContactTile 
+                        name={data.item.name}
+                        lastMessage={data.item.lm}    
+                    />
+                </ScrollView>}
                 keyExtractor={(data) => data.name}
             />
             <StartChat method={navigateMessages} />
@@ -152,12 +187,12 @@ const App = () => {
                         name='Home'
                         component={Home}
                         options={{
-                            title: 'Messages'
+                            title: 'Home'
                         }}
                     />
                     <Stack.Screen 
-                        name='Messages'
-                        component={Messages}
+                        name='StartChat'
+                        component={StartChatPage}
                         options={{
                             title: ''
                         }}
