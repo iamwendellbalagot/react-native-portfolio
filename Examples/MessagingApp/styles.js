@@ -53,5 +53,23 @@ export const s = StyleSheet.create({
     },
     tile__mess: {
         fontSize: 16
+    },
+    startChat: {
+        position: 'absolute',
+        flexDirection: 'row',
+        right: 20,
+        bottom: 40,
+        backgroundColor: colors.darkblue,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    startChat__text: {
+        marginLeft: 7,
+        color: colors.light,
+        fontSize: 17,
+        marginBottom: 5
     }
 })

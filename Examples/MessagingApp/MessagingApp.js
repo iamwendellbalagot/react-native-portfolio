@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { Avatar } from 'react-native-elements'
-import { FontAwesome, Entypo } from '@expo/vector-icons' 
+import { FontAwesome, Entypo, MaterialIcons } from '@expo/vector-icons' 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 
@@ -37,6 +37,20 @@ const ProfileIcon = () => {
                 'https://i.pinimg.com/564x/5e/a5/24/5ea524be1d230dc27809d6942a0a2947.jpg',
             }}
         />
+    )
+}
+
+const StartChat = () => {
+    return (
+        <View style={s.startChat}>
+            <MaterialIcons 
+                name="message" 
+                size={25} 
+                color="#f1f6f9" />
+            <Text style={s.startChat__text}>
+                Start Chat
+            </Text>
+        </View>
     )
 }
 
@@ -92,6 +106,7 @@ const Home = ({navigation}) => {
                 />}
                 keyExtractor={(data) => data.name}
             />
+            <StartChat />
         </View>
     )
 }
