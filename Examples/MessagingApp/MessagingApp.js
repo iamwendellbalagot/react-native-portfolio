@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { FontAwesome, Entypo, MaterialIcons } from '@expo/vector-icons' 
 import {NavigationContainer} from '@react-navigation/native'
@@ -27,6 +27,7 @@ const Search = ({size, color}) => {
     )
 }
 
+
 const ProfileIcon = () => {
     return (
         <Avatar
@@ -40,9 +41,12 @@ const ProfileIcon = () => {
     )
 }
 
-const StartChat = () => {
+const StartChat = ({method}) => {
     return (
-        <View style={s.startChat}>
+        <TouchableOpacity 
+            style={s.startChat} 
+            onPress={() => method()}
+            activeOpacity={0.7}>
             <MaterialIcons 
                 name="message" 
                 size={25} 
@@ -50,14 +54,24 @@ const StartChat = () => {
             <Text style={s.startChat__text}>
                 Start Chat
             </Text>
-        </View>
+        </TouchableOpacity>
     )
 }
 
+const MessageInput =() => {
+    return (
+    <View>
+
+    </View>
+    )
+}
+
+//[Containers] ************
 const ContactTile = ({name, lastMessage}) => {
     const date = `${moment.duration(new Date().getTime()).hours()}:${moment.duration(new Date().getTime()).minutes()}`
     return (
-        <View style={s.contactTile}>
+
+        <TouchableOpacity style={s.contactTile} activeOpacity={0.5}>
             <View style={{flex: 0.23, }}>
                 <ProfileIcon />
             </View>
@@ -70,11 +84,17 @@ const ContactTile = ({name, lastMessage}) => {
                     <Text style={s.tile__mess}>{lastMessage}</Text>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
-
+const Messages = ({navigation}) => {
+    return (
+        <View style={s.messages}>
+            <Text>Hello This is Messages</Text>
+        </View>
+    )
+}
 
 const Home = ({navigation}) => {
 
@@ -90,9 +110,9 @@ const Home = ({navigation}) => {
     const dispatch = useDispatch();
     const contacts = useSelector(getContacts)
 
-    // useEffect(() => {
-    //     console.log(contacts)
-    // }, [contacts])
+    const navigateMessages = () => {
+        navigation.navigate('Messages')
+    }
 
     return (
         <View style={s.app}>
@@ -106,7 +126,7 @@ const Home = ({navigation}) => {
                 />}
                 keyExtractor={(data) => data.name}
             />
-            <StartChat />
+            <StartChat method={navigateMessages} />
         </View>
     )
 }
@@ -129,10 +149,17 @@ const App = () => {
                     }}
                 >
                     <Stack.Screen 
-                        name='Messages'
+                        name='Home'
                         component={Home}
                         options={{
                             title: 'Messages'
+                        }}
+                    />
+                    <Stack.Screen 
+                        name='Messages'
+                        component={Messages}
+                        options={{
+                            title: ''
                         }}
                     />
                 </Stack.Navigator>

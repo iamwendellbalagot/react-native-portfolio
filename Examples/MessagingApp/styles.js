@@ -71,5 +71,12 @@ export const s = StyleSheet.create({
         color: colors.light,
         fontSize: 17,
         marginBottom: 5
+    },
+    messages: {
+        height: '100%',
+        backgroundColor: colors.light,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
