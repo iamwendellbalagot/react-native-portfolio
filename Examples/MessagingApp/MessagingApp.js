@@ -108,7 +108,28 @@ const ContactTile = ({name, lastMessage}) => {
     )
 }
 
+const MessageBox = ({message}) => {
+    return (
+        <View style={message.name==='You'? s.messageBox__you :  s.messageBox__reciever}>
+            <Text
+                style={{
+                    fontSize: 15,
+                    marginBottom: 10
+                }}
+            >{message.message}</Text>
+            <Text
+                style={{
+                    fontSize: 12,
+                    color: 'gray'
+                }}
+            >{message.date}</Text>
+        </View>
+    )
+}
+
 const StartChatPage = ({navigation}) => {
+    const loadedMessages = useSelector(getLoadedMessages)
+
     return (
         
             <View style={s.messages} >
@@ -121,7 +142,13 @@ const StartChatPage = ({navigation}) => {
                     </View>
                 </View>
                 <View style={s.chat__messagesCont}>
-
+                    <FlatList 
+                        data={loadedMessages}
+                        keyExtractor={(data) => data.message}
+                        renderItem={(data) =>
+                            <MessageBox message={data.item} />
+                        }
+                    />
                 </View>
                 <MessageInput />
             </View>

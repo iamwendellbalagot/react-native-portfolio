@@ -104,6 +104,8 @@ export const s = StyleSheet.create({
     // },
     chat__messagesCont: {
         flex: 1,
+        width: '100%',
+        paddingHorizontal: 10
     },
     message__inputCont: {
         flexDirection: 'row',
@@ -127,5 +129,24 @@ export const s = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.darkblue,
         borderRadius: 50,
+    },
+    messageBox__reciever: {
+        backgroundColor: '#fff',
+        marginTop: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        maxWidth: '60%',
+        borderRadius: 10,
+        alignSelf: 'flex-start'
+    },
+    messageBox__you: {
+        backgroundColor: '#d0e8f2',
+        marginTop: 10,
+        marginLeft: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        maxWidth: '60%',
+        borderRadius: 10,
+        alignSelf: 'flex-end'
     }
 })
