@@ -148,5 +148,20 @@ export const s = StyleSheet.create({
         maxWidth: '60%',
         borderRadius: 10,
         alignSelf: 'flex-end'
+    },
+    credentials__cont: {
+        height: '100%',
+        width: '100%'
+    },
+    credentials__bd: {
+        height: '100%',
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        zIndex: 500,
+        position: 'absolute'
+    },
+    credentials__bg: {
+        height: '100%',
+        width: null
     }
 })

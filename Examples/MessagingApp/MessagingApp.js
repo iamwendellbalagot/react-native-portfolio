@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { View, Text, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { View, Text,Image, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { FontAwesome, Entypo, MaterialIcons, Ionicons } from '@expo/vector-icons' 
 import {NavigationContainer} from '@react-navigation/native'
@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack'
 
 import {Provider} from 'react-redux'
 import {useDispatch, useSelector} from 'react-redux'
+import { getUser, setUser } from './reduxSlices/userSlice'
 import {getContacts, setContacts, getLoadedMessages, setLoadedMessages} from './reduxSlices/appSlice'
 import store from './store'
 import {s} from './styles'
@@ -193,11 +194,31 @@ const Home = ({navigation}) => {
     )
 }
 
+const Credentials = ({navigation}) => {
+    useEffect(() => {
+        navigation.setOptions({
+            header: () => null
+        })
+    }, [])
+    return (
+        <View style={s.credentials__cont}>
+            <Image 
+                blurRadius={3}
+                source={require('../../assets/mesageapp__bg.png')} 
+                style={s.credentials__bg} />
+            <View style={s.credentials__bd}>
+
+            </View>
+        </View>
+    )
+}
+
 const App = () => {
     const Stack = createStackNavigator()
+    const user = useSelector(getUser)
+
     return (
         <NavigationContainer>
-            <Provider store={store}>
                 <Stack.Navigator
                     screenOptions={{
                         headerStyle: {
@@ -212,7 +233,7 @@ const App = () => {
                 >
                     <Stack.Screen 
                         name='Home'
-                        component={Home}
+                        component={user? Home : Credentials}
                         options={{
                             title: 'Home'
                         }}
@@ -225,10 +246,17 @@ const App = () => {
                         }}
                     />
                 </Stack.Navigator>
-            </Provider>
         </NavigationContainer>
         
     )
 }
 
-export default App
+const ReduxApp  = () => {
+    return (
+        <Provider store={store}>
+            <App />
+        </Provider>
+    )
+}
+
+export default ReduxApp
