@@ -158,10 +158,38 @@ export const s = StyleSheet.create({
         width: '100%',
         backgroundColor: 'rgba(0,0,0,0.5)',
         zIndex: 500,
-        position: 'absolute'
+        position: 'absolute',
+        alignItems: 'center'
     },
     credentials__bg: {
         height: '100%',
         width: null
-    }
+    },
+    credentials__header: {
+        color: '#f1f6f9',
+        fontWeight: 'bold',
+        fontSize: 35
+    },
+    credentials__register: {
+        color: colors.light,
+        fontSize: 17
+    },  
+    formLogin: {
+        height: 250,
+        width: 350,
+        backgroundColor: '#f1f6f9',
+        zIndex: 1000,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 50
+    },
+    // formLogin__label: {
+    //     marginHorizontal: 10
+    // },  
+    formLogin__input: {
+        marginHorizontal: 0,
+        paddingHorizontal: 10,
+    },
+
 })

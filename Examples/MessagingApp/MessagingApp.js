@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { View, Text,Image, ScrollView, TouchableOpacity, TouchableHighlight } from 'react-native'
-import { Avatar } from 'react-native-elements'
+import { Avatar, Button, Input} from 'react-native-elements'
 import { FontAwesome, Entypo, MaterialIcons, Ionicons } from '@expo/vector-icons' 
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
@@ -194,12 +194,71 @@ const Home = ({navigation}) => {
     )
 }
 
+const FormLogin = () => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const handleLogin = () => {
+        console.log(email, '  ', password);
+    }
+    return (
+        <View style={s.formLogin}>
+            
+            <View style={{
+                width: '100%'
+            }}>
+                {/* <Text style={s.formLogin__label} >Email:</Text> */}
+                <View style={s.formLogin__input} >
+                    <Input
+                        onChangeText={(e) => setEmail(e)}
+                        value={email} 
+                        style={{paddingLeft: 8}}
+                        placeholder='Email'
+                        leftIcon={{ type: 'font-awesome', name: 'envelope',size:20, color:'#14274e'  }}
+                    />
+                </View>
+                
+                {/* <Text style={s.formLogin__label}>Password:</Text> */}
+                <View style={s.formLogin__input}>
+                    <Input
+                        onChangeText={(e) => setPassword(e)}
+                        value={password} 
+                        style={s.formLogin__input} 
+                        placeholder='Password'
+                        secureTextEntry={true}
+                        leftIcon={{ type: 'font-awesome', name: 'lock', size:30, color:'#14274e' }}
+                    />
+                </View>
+                
+                <View style={{marginHorizontal: 20}}>
+                    <Button 
+                        onPress={handleLogin}
+                        title='Login'
+                        buttonStyle={{backgroundColor: '#14274e'}}
+                    />
+                </View>
+                
+            </View>
+        </View>
+    )
+}
+
+
+
 const Credentials = ({navigation}) => {
+    const [login, setLogin] = useState(true)
+
     useEffect(() => {
         navigation.setOptions({
             header: () => null
         })
     }, [])
+
+    const navigateRegister = () => {
+        //setLogin(false)
+        return
+    }
+
     return (
         <View style={s.credentials__cont}>
             <Image 
@@ -207,7 +266,28 @@ const Credentials = ({navigation}) => {
                 source={require('../../assets/mesageapp__bg.png')} 
                 style={s.credentials__bg} />
             <View style={s.credentials__bd}>
+                <View style={{alignItems: 'center', marginTop: '37%'}}>
+                    <Text style={s.credentials__header}>Hello</Text>
+                    <Text style={s.credentials__header}>Welcome Back!</Text>
 
+                </View>
+                <View>
+                    <FormLogin />
+                </View>
+                {login? <View style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginTop: 70
+                }}>
+                    <Text style={s.credentials__register}>Need an account?</Text>
+                    <TouchableOpacity onPress={navigateRegister}>
+                        <Text
+                            style={[s.credentials__register,{fontWeight: 'bold'}]}
+                        >{` Register`}</Text>
+                    </TouchableOpacity>
+                </View>: null}
             </View>
         </View>
     )
