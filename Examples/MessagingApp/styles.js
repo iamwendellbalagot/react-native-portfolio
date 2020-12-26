@@ -191,5 +191,9 @@ export const s = StyleSheet.create({
         marginHorizontal: 0,
         paddingHorizontal: 10,
     },
-
+    register__back: {
+        position: 'absolute',
+        left: 15,
+        top: 40
+    }
 })

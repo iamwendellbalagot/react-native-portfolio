@@ -243,6 +243,74 @@ const FormLogin = () => {
     )
 }
 
+const FormRegister = () => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confpassword, setConfPassword] = useState('')
+    const [nickname, setNickname] = useState('')
+
+    const handleRegister = () => {
+        console.log(email, '  ', password, '  ', nickname, '  ', confpassword);
+    }
+    return (
+        <View style={[s.formLogin, {height: 350, marginTop: 50}]}>
+            
+            <View style={{
+                width: '100%'
+            }}>
+                {/* <Text style={s.formLogin__label} >Email:</Text> */}
+                <View style={s.formLogin__input} >
+                    <Input
+                        onChangeText={(e) => setNickname(e)}
+                        style={s.formLogin__input} 
+                        value={nickname} 
+                        placeholder='Nickname'
+                    />
+                </View>
+                
+                <View style={s.formLogin__input} >
+                    <Input
+                        onChangeText={(e) => setEmail(e)}
+                        style={s.formLogin__input} 
+                        value={email} 
+                        placeholder='Email'
+                    />
+                </View>
+                
+                {/* <Text style={s.formLogin__label}>Password:</Text> */}
+                <View style={s.formLogin__input}>
+                    <Input
+                        onChangeText={(e) => setPassword(e)}
+                        value={password} 
+                        style={s.formLogin__input} 
+                        placeholder='Password'
+                        secureTextEntry={true}
+                    />
+                </View>
+
+                <View style={s.formLogin__input}>
+                    <Input
+                        onChangeText={(e) => setConfPassword(e)}
+                        value={confpassword}
+                        style={s.formLogin__input} 
+                        placeholder='Confirm Password'
+                        secureTextEntry={true}
+                    />
+                </View>
+                
+                <View style={{marginHorizontal: 20}}>
+                    <Button 
+                        onPress={handleRegister}
+                        title='Register'
+                        buttonStyle={{backgroundColor: '#14274e'}}
+                    />
+                </View>
+                
+            </View>
+        </View>
+    )
+}
+
 
 
 const Credentials = ({navigation}) => {
@@ -255,7 +323,7 @@ const Credentials = ({navigation}) => {
     }, [])
 
     const navigateRegister = () => {
-        //setLogin(false)
+        setLogin(!login)
         return
     }
 
@@ -266,13 +334,23 @@ const Credentials = ({navigation}) => {
                 source={require('../../assets/mesageapp__bg.png')} 
                 style={s.credentials__bg} />
             <View style={s.credentials__bd}>
-                <View style={{alignItems: 'center', marginTop: '37%'}}>
+                {!login?<TouchableOpacity 
+                    style={s.register__back}
+                    onPress={navigateRegister}
+                >
+                    <Ionicons name="arrow-back-outline" size={40} color="white" />
+                </TouchableOpacity>: null}
+                {login?<View style={{alignItems: 'center', marginTop: '37%'}}>
                     <Text style={s.credentials__header}>Hello</Text>
                     <Text style={s.credentials__header}>Welcome Back!</Text>
 
                 </View>
+                : <View  style={{alignItems: 'center', marginTop: '25%'}}>
+                    <Text style={[s.credentials__header]}>Register</Text>
+                </View>
+                }
                 <View>
-                    <FormLogin />
+                    {login? <FormLogin />: <FormRegister />}
                 </View>
                 {login? <View style={{
                     width: '100%',
