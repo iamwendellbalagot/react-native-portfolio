@@ -157,13 +157,40 @@ const StartChatPage = ({navigation}) => {
 }
 
 const Home = ({navigation}) => {
+    
+    const handleLogout = () => {
+        auth.signOut()
+        .then(res => {
+            dispatch(setUser(null))
+            navigation.reset({
+                index: 0,
+                routes: [{name: 'Credentials'}]
+            })
+        })
+    }
+
+    // <Entypo 
+    //             name="dots-three-vertical" 
+    //             size={24} 
+    //             color="#f1f6f9"  
+    //             onPress={handleLogout}
+    //             />
 
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <Entypo 
-                name="dots-three-vertical" 
-                size={24} 
-                color="#f1f6f9" />
+            headerRight: () => 
+            <Button 
+                icon={{
+                    name: 'dots-three-vertical',
+                    color: 'white',
+                    size:24,
+                    type: 'entypo'
+                }}
+                type='clear'
+                onPress={handleLogout}
+            />
+            
+            
         })
     },[])
 
@@ -194,12 +221,20 @@ const Home = ({navigation}) => {
     )
 }
 
-const FormLogin = () => {
+const FormLogin = ({navigation}) => {
+    const dispatch = useDispatch()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const handleLogin = () => {
         console.log(email, '  ', password);
+        auth.signInWithEmailAndPassword(email, password)
+        .then(userAuth => {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+              });
+        })
     }
     return (
         <View style={s.formLogin}>
@@ -244,13 +279,37 @@ const FormLogin = () => {
 }
 
 const FormRegister = () => {
+    const dispatch = useDispatch()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confpassword, setConfPassword] = useState('')
     const [nickname, setNickname] = useState('')
+    const [error, setError] = useState(false)
 
     const handleRegister = () => {
         console.log(email, '  ', password, '  ', nickname, '  ', confpassword);
+        nickname.length>4 && email.length !==0 && confpassword === password && auth.createUserWithEmailAndPassword(
+            email, password
+        )
+        .then(res => {
+            res.user.updateProfile({
+                displayName: nickname
+            })
+            .then(_res => {
+                dispatch(setUser(auth.currentUser))
+            })
+        })
+    }
+
+    useEffect(() => {
+        console.log(auth.currentUser)
+    },[])
+
+    const errorStyle = {
+        borderColor: 'salmon', 
+        borderWidth: 1,
+        borderRadius: 3,
+        paddingLeft: 10
     }
     return (
         <View style={[s.formLogin, {height: 350, marginTop: 50}]}>
@@ -282,7 +341,7 @@ const FormRegister = () => {
                     <Input
                         onChangeText={(e) => setPassword(e)}
                         value={password} 
-                        style={s.formLogin__input} 
+                        style={[s.formLogin__input, (error? errorStyle: null)]} 
                         placeholder='Password'
                         secureTextEntry={true}
                     />
@@ -292,7 +351,7 @@ const FormRegister = () => {
                     <Input
                         onChangeText={(e) => setConfPassword(e)}
                         value={confpassword}
-                        style={s.formLogin__input} 
+                        style={[s.formLogin__input, (error? errorStyle: null)]} 
                         placeholder='Confirm Password'
                         secureTextEntry={true}
                     />
@@ -314,6 +373,7 @@ const FormRegister = () => {
 
 
 const Credentials = ({navigation}) => {
+    const user = useSelector(getUser)
     const [login, setLogin] = useState(true)
 
     useEffect(() => {
@@ -321,6 +381,13 @@ const Credentials = ({navigation}) => {
             header: () => null
         })
     }, [])
+
+    useEffect(() => {
+        if(user) navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+        });
+    }, [user])
 
     const navigateRegister = () => {
         setLogin(!login)
@@ -350,7 +417,7 @@ const Credentials = ({navigation}) => {
                 </View>
                 }
                 <View>
-                    {login? <FormLogin />: <FormRegister />}
+                    {login? <FormLogin navigation={navigation} />: <FormRegister />}
                 </View>
                 {login? <View style={{
                     width: '100%',
@@ -372,8 +439,28 @@ const Credentials = ({navigation}) => {
 }
 
 const App = () => {
+    const dispatch = useDispatch()
     const Stack = createStackNavigator()
     const user = useSelector(getUser)
+    //const [user, setUserr] = useState(null)
+
+    useEffect(() => {
+        console.log('COOOOOOOOOO')
+        auth.onAuthStateChanged(userAuth => {
+            if(userAuth){
+                // console.log('Running Firsrt  ',userAuth)
+                // setUserr(userAuth)
+                dispatch(setUser({
+                    uuid: userAuth.uid,
+                    displayName: userAuth.displayName
+                }))
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        console.log(user);
+    },[user])
 
     return (
         <NavigationContainer>
@@ -390,8 +477,16 @@ const App = () => {
                     }}
                 >
                     <Stack.Screen 
+                        name='Credentials'
+                        component={Credentials}
+                        options={{
+                            title: ''
+                        }}
+                    />
+
+                    <Stack.Screen 
                         name='Home'
-                        component={user? Home : Credentials}
+                        component={Home}
                         options={{
                             title: 'Home'
                         }}
