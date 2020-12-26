@@ -225,15 +225,27 @@ const FormLogin = ({navigation}) => {
     const dispatch = useDispatch()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState(null);
+
+    const errorStyle = {
+        borderColor: 'rgba(250,128,114,0.5)', 
+        borderWidth: 2,
+        borderRadius: 3,
+        paddingLeft: 10
+    }
 
     const handleLogin = () => {
         console.log(email, '  ', password);
-        auth.signInWithEmailAndPassword(email, password)
+
+
+        email.length>1 && password.length> 4 && auth.signInWithEmailAndPassword(email, password)
         .then(userAuth => {
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Home' }],
               });
+        }).catch(err => {
+            setError(err.code);
         })
     }
     return (
@@ -247,7 +259,8 @@ const FormLogin = ({navigation}) => {
                     <Input
                         onChangeText={(e) => setEmail(e)}
                         value={email} 
-                        style={{paddingLeft: 8}}
+                        textContentType='emailAddress'
+                        style={[{paddingLeft: 8}, error === 'auth/user-not-found' && errorStyle]}
                         placeholder='Email'
                         leftIcon={{ type: 'font-awesome', name: 'envelope',size:20, color:'#14274e'  }}
                     />
@@ -258,7 +271,7 @@ const FormLogin = ({navigation}) => {
                     <Input
                         onChangeText={(e) => setPassword(e)}
                         value={password} 
-                        style={s.formLogin__input} 
+                        style={[s.formLogin__input, error === 'auth/wrong-password' && errorStyle]} 
                         placeholder='Password'
                         secureTextEntry={true}
                         leftIcon={{ type: 'font-awesome', name: 'lock', size:30, color:'#14274e' }}
