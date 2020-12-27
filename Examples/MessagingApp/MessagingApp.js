@@ -136,10 +136,15 @@ const MessageBox = ({message}) => {
 const StartChatPage = ({navigation}) => {
     const loadedMessages = useSelector(getLoadedMessages)
     const [message, setMessage] = useState('')
-    const [receiver, setReciever] = useState('')
+    const [receiver, setReciever] = useState('NSiIplGcPDRn1NeHyHPCbZNmExO2')
 
     const handleSendMessage = () => {
-        console.log(message, receiver);
+        db.collection('messaging-app-users')
+        .doc(receiver)
+        .get()
+        .then(res => {
+            console.log(typeof(res.exists));
+        })
     }
 
     return (
