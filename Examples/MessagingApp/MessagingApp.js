@@ -12,7 +12,7 @@ import {getContacts, setContacts, getLoadedMessages, setLoadedMessages} from './
 import store from './store'
 import {s} from './styles'
 import firebase from 'firebase'
-import {auth,db} from '../Login/firebase'
+import {auth, db} from '../Login/firebase'
 import moment from 'moment'
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 
@@ -59,7 +59,7 @@ const StartChat = ({method}) => {
     )
 }
 
-const MessageInput =() => {
+const MessageInput =({input, setInput, method}) => {
     return (
     <View style={s.message__inputCont}>
         <View style={s.message1}>
@@ -73,6 +73,8 @@ const MessageInput =() => {
                     flex: 0.8,
                     paddingLeft: 10
                 }}
+                value={input}
+                onChangeText={e => setInput(e)}
             />
             <MaterialIcons 
                 name="insert-emoticon" 
@@ -81,7 +83,10 @@ const MessageInput =() => {
             <Ionicons 
                 name="ios-send-sharp" 
                 size={30} 
-                color="#14274e" />
+                color="#14274e"
+                onPress={method}
+
+            />
         </View>
     </View> 
     )
@@ -130,6 +135,12 @@ const MessageBox = ({message}) => {
 
 const StartChatPage = ({navigation}) => {
     const loadedMessages = useSelector(getLoadedMessages)
+    const [message, setMessage] = useState('')
+    const [receiver, setReciever] = useState('')
+
+    const handleSendMessage = () => {
+        console.log(message, receiver);
+    }
 
     return (
         
@@ -139,19 +150,21 @@ const StartChatPage = ({navigation}) => {
                         <Text style={s.chat__header__text}>To</Text>
                         <TextInput 
                             placeholder='Contact ID'
+                            value={receiver}
+                            onChangeText={e => setReciever(e)}
                         />
                     </View>
                 </View>
                 <View style={s.chat__messagesCont}>
-                    <FlatList 
+                    {/* <FlatList 
                         data={loadedMessages}
                         keyExtractor={(data) => data.message}
                         renderItem={(data) =>
                             <MessageBox message={data.item} />
                         }
-                    />
+                    /> */}
                 </View>
-                <MessageInput />
+                <MessageInput setInput={setMessage} input={message} method={handleSendMessage} />
             </View>
     )
 }
@@ -309,7 +322,21 @@ const FormRegister = () => {
                 displayName: nickname
             })
             .then(_res => {
-                dispatch(setUser(auth.currentUser))
+
+                const userData = {
+                    uuid: auth.currentUser.uid,
+                    displayName: auth.currentUser.displayName,
+                    photoUri: auth.currentUser.photoURL,
+                    joined: firebase.firestore.FieldValue.serverTimestamp()
+                }
+
+                db.collection('messaging-app-users')
+                .doc(userData.uuid)
+                .set(userData)
+                .then(done => {
+                    console.log('Added a user form firestore');
+                })
+                dispatch(setUser(userData))
             })
         })
     }
@@ -458,22 +485,23 @@ const App = () => {
     //const [user, setUserr] = useState(null)
 
     useEffect(() => {
-        console.log('COOOOOOOOOO')
         auth.onAuthStateChanged(userAuth => {
             if(userAuth){
                 // console.log('Running Firsrt  ',userAuth)
                 // setUserr(userAuth)
                 dispatch(setUser({
                     uuid: userAuth.uid,
-                    displayName: userAuth.displayName
+                    displayName: userAuth.displayName,
+                    photoUri: auth.currentUser.photoURL,
+                    joined: firebase.firestore.FieldValue.serverTimestamp()
                 }))
             }
         })
     }, [])
 
-    useEffect(() => {
-        console.log(user);
-    },[user])
+    // useEffect(() => {
+    //     console.log(user);
+    // },[user])
 
     return (
         <NavigationContainer>
