@@ -135,15 +135,58 @@ const MessageBox = ({message}) => {
 
 const StartChatPage = ({navigation}) => {
     const loadedMessages = useSelector(getLoadedMessages)
-    const [message, setMessage] = useState('')
+    const user = useSelector(getUser)
+    const [message, setMessage] = useState('lets goooooooo')
     const [receiver, setReciever] = useState('NSiIplGcPDRn1NeHyHPCbZNmExO2')
 
     const handleSendMessage = () => {
-        db.collection('messaging-app-users')
-        .doc(receiver)
+        const collectionRef = db.collection('messaging-app-users')
+        
+        collectionRef.doc(receiver)
         .get()
         .then(res => {
-            console.log(typeof(res.exists));
+            if(res.exists){
+                const timeSent = new Date()
+                const messSend = {
+                    message: message,
+                    timeSent: timeSent
+                }
+
+                collectionRef.doc(user.uuid)
+                .collection('contacts')
+                .doc(receiver)
+                .get()
+                .then(contact => {
+                    if(contact.exists){
+                        collectionRef.doc(user.uuid)
+                        .collection('contacts')
+                        .doc(contact.id)
+                        .update({
+                            messages: firebase.firestore.FieldValue.arrayUnion(
+                                messSend
+                            )
+                        })
+                    }else{
+                        collectionRef.doc(user.uuid)
+                        .collection('contacts')
+                        .doc(res.id)
+                        .set({
+                            messages: []
+                        })
+                        .then( done =>  {
+                            
+                            collectionRef.doc(user.uuid)
+                            .collection('contacts')
+                            .doc(res.id)
+                            .update({
+                                messages: firebase.firestore.FieldValue.arrayUnion(
+                                    messSend
+                                )
+                            })
+                        })
+                    } 
+                })
+            }
         })
     }
 
