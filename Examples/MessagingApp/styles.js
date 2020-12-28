@@ -184,9 +184,6 @@ export const s = StyleSheet.create({
         alignItems: 'center',
         marginTop: 50
     },
-    // formLogin__label: {
-    //     marginHorizontal: 10
-    // },  
     formLogin__input: {
         marginHorizontal: 0,
         paddingHorizontal: 10,
